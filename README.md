@@ -2,9 +2,22 @@
 
 Go package for reading cofig file by JSON, XML, YAML.
 
-## TODO
+## Installation
 
-read file config into map[string]interface{}
+```bash
+go get github.com/go-trellis/config
+go get gopkg.in/yaml.v2
+```
+
+Or 
+
+```bash
+go get -u github.com/go-trellis/config
+```
+
+### imports
+
+import gopkg.in/yaml.v2
 
 ## Usage
 
@@ -26,3 +39,7 @@ rJson := NewJsonReader()
 xJson := NewXmlReader()
 yJson := NewYamlReader()
 ```
+
+## TODO
+
+read file config into map[string]interface{}
