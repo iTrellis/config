@@ -7,7 +7,8 @@ package config
 type ReaderType int
 
 const (
-	ReaderTypeJson ReaderType = iota + 1
+	ReaderTypeSuffix ReaderType = iota
+	ReaderTypeJson
 	ReaderTypeXml
 	ReaderTypeYaml
 )
@@ -25,6 +26,6 @@ func New(rt ReaderType) Reader {
 	case ReaderTypeYaml:
 		return NewYamlReader()
 	default:
-		return nil
+		return NewSuffixReader()
 	}
 }

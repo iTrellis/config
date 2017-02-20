@@ -40,6 +40,12 @@ xJson := NewXmlReader()
 yJson := NewYamlReader()
 ```
 
-## TODO
+* judge reader by file's suffix
 
-read file config into map[string]interface{}
+```go
+suffixJson := NewSuffixReader()
+```
+
+* .json = NewJsonReader()
+* .xml = NewXmlReader()
+* .yaml | .yml = NewYamlReader()
