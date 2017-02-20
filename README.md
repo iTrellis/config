@@ -35,15 +35,15 @@ if err := r.Read(filename, model); err != nil {
 	return
 }
 
-rJson := NewJsonReader()
-xJson := NewXmlReader()
-yJson := NewYamlReader()
+rReader := NewJsonReader()
+xReader := NewXmlReader()
+yReader := NewYamlReader()
 ```
 
 * judge reader by file's suffix
 
 ```go
-suffixJson := NewSuffixReader()
+suffixReader := NewSuffixReader()
 ```
 
 * .json = NewJsonReader()
