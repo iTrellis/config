@@ -17,7 +17,7 @@ go get -u github.com/go-trellis/config
 
 ### imports
 
-import gopkg.in/yaml.v2
+import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 
 ## Usage
 
