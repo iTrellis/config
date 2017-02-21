@@ -5,8 +5,9 @@ Go package for reading cofig file by JSON, XML, YAML.
 ## Installation
 
 ```bash
-go get github.com/go-trellis/config
+go get github.com/go-trellis/formats/inner-types
 go get gopkg.in/yaml.v2
+go get github.com/go-trellis/config
 ```
 
 ```bash
@@ -51,7 +52,7 @@ type Config interface {
 [See More Example](example/suffix.go)
 
 
-### Repo
+### Reader Repo
 
 ```go
 type Reader interface {
