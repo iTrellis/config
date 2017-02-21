@@ -21,6 +21,23 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 
 ## Usage
 
+### Config
+
+```go
+c, e := NewConfig(name)
+```
+
+* GetString
+* GetInt
+* GetFloat
+* GetBoolean
+
+[**See More Example**](example/suffix.go)
+
+**TODO:**
+
+* SetKeyValue(key, value)
+
 ### Repo
 
 ```go
@@ -53,3 +70,5 @@ sReader := NewSuffixReader()
 * .json = NewJsonReader()
 * .xml = NewXmlReader()
 * .yaml | .yml = NewYamlReader()
+
+
