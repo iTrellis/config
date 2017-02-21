@@ -12,10 +12,13 @@ import (
 
 func main() {
 	c, e := config.NewConfig("example.yml")
+	// c, e := config.NewConfig("example.json")
 	if e != nil {
 		fmt.Println(e)
 		return
 	}
+
+	fmt.Println(c)
 	// get key value
 	printT("get a Easy!\t", c.GetString("a"))
 	printT("get a.b.c def:example", c.GetString("a.b.c", "example"))

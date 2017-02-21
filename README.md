@@ -9,8 +9,6 @@ go get github.com/go-trellis/config
 go get gopkg.in/yaml.v2
 ```
 
-Or 
-
 ```bash
 go get -u github.com/go-trellis/config
 ```
@@ -23,20 +21,34 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 
 ### Config
 
+* dot separator to get values, and if return nil, you should set default
+* You can do like this: c.GetString("a.b.c") Or c.GetString("a.b.c", "default")
+* Supported: .json, .yaml, .yml
+
 ```go
 c, e := NewConfig(name)
+c.GetString("a.b.c")
 ```
 
-* GetString
-* GetInt
-* GetFloat
-* GetBoolean
-* GetInterface
-* GetList
-* SetKeyValue
-* Dump
+### Feature
 
-[**See More Example**](example/suffix.go)
+```go
+type Config interface {
+	GetInterface(key string, defValue ...interface{}) (res interface{})
+	GetString(key string, defValue ...string) (res string)
+	GetBoolean(key string, defValue ...bool) (b bool)
+	GetInt(key string, defValue ...int) (res int)
+	GetFloat(key string, defValue ...float64) (res float64)
+	GetList(key string, defValue ...interface{}) (res interface{})
+	GetConfig(key string) Config
+	SetKeyValue(key string, value interface{}) (err error)
+	Dump() (bs []byte, err error)
+}
+```
+
+### More Example
+
+[See More Example](example/suffix.go)
 
 
 ### Repo
@@ -75,4 +87,6 @@ sReader := NewSuffixReader()
 * .xml = NewXmlReader()
 * .yaml | .yml = NewYamlReader()
 
+### TODO
 
+supported Config .xml

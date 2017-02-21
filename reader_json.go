@@ -5,6 +5,7 @@
 package config
 
 import (
+	"bytes"
 	"encoding/json"
 	"sync"
 )
@@ -33,7 +34,11 @@ func (p *defJsonReader) Read(name string, model interface{}) error {
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(data, model)
+
+	decoder := json.NewDecoder(bytes.NewBuffer(data))
+	decoder.UseNumber()
+
+	return decoder.Decode(model)
 }
 
 func (*defJsonReader) Dump(v interface{}) ([]byte, error) {

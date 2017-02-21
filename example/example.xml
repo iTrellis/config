@@ -1,0 +1,19 @@
+<!--
+## GNU GPL v3 License
+
+## Copyright (c) 2017 github.com:go-trellis
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<a>Easy!</a>
+	<b>
+		<c>
+			<e>Just Do It</e>
+			<f>2</f>
+			<g>on</g>
+		</c>
+		<d>3</d>
+		<d>4</d>
+	</b>
+	<h>1.01</h>
+</root>

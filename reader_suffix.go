@@ -51,7 +51,7 @@ func (p *defSuffixReader) Dump(v interface{}) ([]byte, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	switch p.fileToReaderType() {
+	switch fileToReaderType(p.name) {
 	case ReaderTypeJson:
 		return jsonReader.Dump(v)
 	case ReaderTypeXml:
@@ -63,13 +63,13 @@ func (p *defSuffixReader) Dump(v interface{}) ([]byte, error) {
 	return nil, ErrUnknownSuffixes
 }
 
-func (p *defSuffixReader) fileToReaderType() ReaderType {
+func fileToReaderType(name string) ReaderType {
 	switch {
-	case strings.HasSuffix(p.name, ".json"):
+	case strings.HasSuffix(name, ".json"):
 		return ReaderTypeJson
-	case strings.HasSuffix(p.name, ".xml"):
+	case strings.HasSuffix(name, ".xml"):
 		return ReaderTypeXml
-	case strings.HasSuffix(p.name, ".yml"), strings.HasSuffix(p.name, ".yaml"):
+	case strings.HasSuffix(name, ".yml"), strings.HasSuffix(name, ".yaml"):
 		return ReaderTypeYaml
 	}
 
