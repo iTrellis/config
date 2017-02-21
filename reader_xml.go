@@ -15,11 +15,15 @@ type defXmlReader struct {
 
 var xmlReader = &defXmlReader{}
 
+// NewXmlReader return a xml reader
 func NewXmlReader() Reader {
 	return xmlReader
 }
 
 func (p *defXmlReader) Read(name string, model interface{}) error {
+	if name == "" {
+		return ErrInvalidFilePath
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	data, err := readFile(name)
@@ -27,4 +31,8 @@ func (p *defXmlReader) Read(name string, model interface{}) error {
 		return err
 	}
 	return xml.Unmarshal(data, model)
+}
+
+func (*defXmlReader) Dump(v interface{}) ([]byte, error) {
+	return xml.Marshal(v)
 }

@@ -11,15 +11,21 @@ import (
 
 type defJsonReader struct {
 	mu sync.Mutex
+
+	name string
 }
 
 var jsonReader = &defJsonReader{}
 
+// NewJsonReader return a json reader
 func NewJsonReader() Reader {
 	return jsonReader
 }
 
 func (p *defJsonReader) Read(name string, model interface{}) error {
+	if name == "" {
+		return ErrInvalidFilePath
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -28,4 +34,8 @@ func (p *defJsonReader) Read(name string, model interface{}) error {
 		return err
 	}
 	return json.Unmarshal(data, model)
+}
+
+func (*defJsonReader) Dump(v interface{}) ([]byte, error) {
+	return json.Marshal(v)
 }

@@ -16,11 +16,15 @@ type defYamlReader struct {
 
 var yamlReader = &defYamlReader{}
 
+// NewXmlReader return a yaml reader
 func NewYamlReader() Reader {
 	return yamlReader
 }
 
 func (p *defYamlReader) Read(name string, model interface{}) error {
+	if name == "" {
+		return ErrInvalidFilePath
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	data, err := readFile(name)
@@ -28,4 +32,8 @@ func (p *defYamlReader) Read(name string, model interface{}) error {
 		return err
 	}
 	return yaml.Unmarshal(data, model)
+}
+
+func (*defYamlReader) Dump(v interface{}) ([]byte, error) {
+	return yaml.Marshal(v)
 }

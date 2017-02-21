@@ -9,6 +9,8 @@ import (
 )
 
 var (
-	ErrNotMap   = errors.New("interface not map")
-	ErrValueNil = errors.New("value is nil")
+	ErrNotMap          = errors.New("interface not map")
+	ErrValueNil        = errors.New("value is nil")
+	ErrInvalidFilePath = errors.New("invalid file path")
+	ErrUnknownSuffixes = errors.New("unknown file with suffix")
 )

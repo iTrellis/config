@@ -31,18 +31,22 @@ c, e := NewConfig(name)
 * GetInt
 * GetFloat
 * GetBoolean
+* GetInterface
+* GetList
+* SetKeyValue
+* Dump
 
 [**See More Example**](example/suffix.go)
 
-**TODO:**
-
-* SetKeyValue(key, value)
 
 ### Repo
 
 ```go
 type Reader interface {
-	Read(name string, model interface{}) error
+	// read file into model
+	Read(path string, model interface{}) error
+	// dump configs' cache
+	Dump(model interface{}) ([]byte, error)
 }
 ```
 

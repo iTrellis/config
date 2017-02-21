@@ -4,6 +4,7 @@
 
 package config
 
+// ReaderType
 type ReaderType int
 
 const (
@@ -14,9 +15,13 @@ const (
 )
 
 type Reader interface {
-	Read(name string, model interface{}) error
+	// read file into model
+	Read(path string, model interface{}) error
+	// dump configs' cache
+	Dump(model interface{}) ([]byte, error)
 }
 
+// New return a reader by ReaderType
 func New(rt ReaderType) Reader {
 	switch rt {
 	case ReaderTypeJson:
