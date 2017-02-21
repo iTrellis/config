@@ -90,4 +90,4 @@ sReader := NewSuffixReader()
 
 ### TODO
 
-supported Config .xml
+supported Config .xml: now go encoding/xml not supported map[string]interface{}
