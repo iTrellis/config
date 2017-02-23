@@ -51,7 +51,7 @@ func main() {
 	printT("set a Difficult!", c.SetKeyValue("a", "Difficult!"))
 	printT("set h.a list boolean", c.SetKeyValue("h.a", []bool{false, true, false}))
 	printT("set h.f list float", c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4}))
-	fmt.Println(c)
+	printT("set h.b byte size 10T", c.SetKeyValue("h.b", "10T"))
 
 	// get key value
 	printT("get a.b.c def:example", c.GetString("a.b.c", "example"))
@@ -60,6 +60,7 @@ func main() {
 	printT("get h.a list boolean", c.GetBooleanList("h.a"))
 	printT("get h.f list float", c.GetFloatList("h.f"))
 	printT("get h float not exist", c.GetFloat("h"))
+	printT("set h.b byte size 10t", c.GetByteSize("h.b"))
 	printT("get b.d def:example", c.GetString("b.d", "example"))
 	printT("get b.d []object 1->4", c.GetList("b.d"))
 	printT("get b.d []string nil", c.GetStringList("b.d"))
