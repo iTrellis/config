@@ -29,7 +29,8 @@ func main() {
 	printT("get b.c.g ON,return T", c.GetBoolean("b.c.g"))
 	printT("get b.c.x def:true", c.GetBoolean("b.c.x", true))
 	printT("get b config\t", c.GetConfig("b"))
-	printT("get b.d list 1->2", c.GetList("b.d"))
+	printT("get b.d list 3->4", c.GetList("b.d"))
+	printT("get b.c.t time:1day", c.GetTimeDuration("b.c.t"))
 
 	// set key value
 	printT("set a.b.c Correct", c.SetKeyValue("a.b.c", "Correct"))
@@ -39,22 +40,33 @@ func main() {
 	printT("set b.d list 1->4", c.SetKeyValue("b.d", []int{1, 2, 3, 4}))
 
 	// get key value
-	printT("get a string\t", c.GetString("a", "example"))
+	printT("get a def:example", c.GetString("a", "example"))
 	printT("get a interface\t", c.GetInterface("a", "example"))
 	printT("get a.b.c set Correct", c.GetString("a.b.c", "example"))
 	printT("get b.c.e set Correct", c.GetString("b.c.e", "example"))
-	printT("get b.c.g set false", c.GetBoolean("b.c.g"))
+	printT("get b.c.g set false", c.GetBoolean("b.c.g", true))
 	printT("get b.c.d set d\t", c.GetString("b.c.d", "example"))
 
 	// set key value
 	printT("set a Difficult!", c.SetKeyValue("a", "Difficult!"))
+	printT("set h.a list boolean", c.SetKeyValue("h.a", []bool{false, true, false}))
+	printT("set h.f list float", c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4}))
+	fmt.Println(c)
 
 	// get key value
 	printT("get a.b.c def:example", c.GetString("a.b.c", "example"))
 	printT("get a Difficult!", c.GetString("a", "example"))
 	printT("get a list nil\t", c.GetList("a"))
-	printT("get b.d string\t", c.GetString("b.d", "example"))
-	printT("get b.d list 1->4", c.GetList("b.d"))
+	printT("get h.a list boolean", c.GetBooleanList("h.a"))
+	printT("get h.f list float", c.GetFloatList("h.f"))
+	printT("get h float not exist", c.GetFloat("h"))
+	printT("get b.d def:example", c.GetString("b.d", "example"))
+	printT("get b.d []object 1->4", c.GetList("b.d"))
+	printT("get b.d []string nil", c.GetStringList("b.d"))
+	printT("get b.d []int 1->4", c.GetIntList("b.d"))
+
+	printT("set b.d [\"1\",\"2\",\"3\"]", c.SetKeyValue("b.d", []string{"1", "2", "3"}))
+	printT("get b.d []string 1->3", c.GetStringList("b.d"))
 
 	bs, _ := c.Dump()
 	printT("last dump", "\n"+string(bs))

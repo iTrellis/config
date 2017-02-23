@@ -40,7 +40,12 @@ type Config interface {
 	GetBoolean(key string, defValue ...bool) (b bool)
 	GetInt(key string, defValue ...int) (res int)
 	GetFloat(key string, defValue ...float64) (res float64)
-	GetList(key string, defValue ...interface{}) (res interface{})
+	GetList(key string) (res []interface{})
+	GetStringList(key string) []string
+	GetBooleanList(key string) []bool
+	GetIntList(key string) []int
+	GetFloatList(key string) []float64
+	GetTimeDuration(key string, defValue ...time.Duration) time.Duration
 	GetConfig(key string) Config
 	SetKeyValue(key string, value interface{}) (err error)
 	Dump() (bs []byte, err error)

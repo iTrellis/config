@@ -8,5 +8,6 @@ b:
     e: "Just Do it"
     f: 2
     g: ON
+    t: 1day
   d: [3, 4]
 h: 1.01
