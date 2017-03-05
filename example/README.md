@@ -7,7 +7,7 @@
 get a Easy!   = Easy!
 copy b.c.cn.a test! = test
 copy b.c.cn.a value!  = value
-copy n.a test!    = value
+copy n.a value!    = value
 copy b.d to b.c.cbd!  = [3 4]
 get a.b.c def:example = example
 get b.c.e   = Just Do it
@@ -59,7 +59,7 @@ last dump =
 get a Easy!   = Easy!
 copy b.c.cn.a test! = test
 copy b.c.cn.a value!  = value
-copy n.a test!  = value
+copy n.a value!  = value
 copy b.d to b.c.cbd!  = [3 4]
 get a.b.c def:example = example
 get b.c.e   = Just Do it

@@ -23,7 +23,7 @@ func main() {
 	printT("copy b.c.cn.a test!", c.GetInterface("b.c.cn.a"))
 	c.SetKeyValue("b.c.cn.a", "value")
 	printT("copy b.c.cn.a value!", c.GetInterface("b.c.cn.a"))
-	printT("copy n.a test!", c.GetInterface("n.a"))
+	printT("copy n.a value!", c.GetInterface("n.a"))
 	printT("copy b.d to b.c.cbd!", c.GetIntList("b.c.cbd"))
 	printT("get a.b.c def:example", c.GetString("a.b.c", "example"))
 	printT("get b.c.e\t", c.GetString("b.c.e"))
