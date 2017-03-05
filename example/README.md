@@ -3,9 +3,11 @@
 ### Run: go run json.go
 
 ```bash
-&{example.json 1 0x213650 {{0 0} 0 0 0 0} map[a:Easy! b:map[c:map[t:1day ca:Easy! cbd:[3 4] e:Just Do it f:2 g:ON] d:[3 4]] h:1.01 c:map[f:2 g:ON t:1day ca:Easy! cbd:[3 4] e:Just Do it]]}
+&{example.json 1 0x213650 {{0 0} 0 0 0 0} map[h:1.01 n:map[a:test] a:Easy! b:map[c:map[f:2 g:ON t:1day cn:map[a:test] cbd:[3 4] e:Just Do it] d:[3 4]]]}
 get a Easy!   = Easy!
-copy b.c.ca Easy! = Easy!
+copy b.c.cn.a test! = test
+copy b.c.cn.a value!  = value
+copy n.a test!    = value
 copy b.d to b.c.cbd!  = [3 4]
 get a.b.c def:example = example
 get b.c.e   = Just Do it
@@ -14,7 +16,7 @@ get b.c.f def:100,but 2 = 2
 get b.c.e not exist = 0
 get b.c.g ON,return T = true
 get b.c.x def:true  = true
-get b config    = &{ 0 0x213650 {{0 0} 0 0 0 0} map[b:map[c:map[e:Just Do it f:2 g:ON t:1day ca:Easy! cbd:[3 4]] d:[3 4]]]}
+get b config    = &{ 0 0x213650 {{0 0} 0 0 0 0} map[b:map[c:map[f:2 g:ON t:1day cn:map[a:value] cbd:[3 4] e:Just Do it] d:[3 4]]]}
 get b.d list 3->4 = [3 4]
 get b.c.t time:1day = 24h0m0s
 set a.b.c Correct = <nil>
@@ -46,16 +48,18 @@ get b.d []int 1->4  = [1 2 3 4]
 set b.d ["1","2","3"] = <nil>
 get b.d []string 1->3 = [1 2 3]
 last dump =
-{"a":"Difficult!","b":{"c":{"ca":"Easy!","cbd":[3,4],"d":"d","e":"Correct","f":2,"g":false,"t":"1day"},"d":["1","2","3"]},"c":{"ca":"Easy!","cbd":[3,4],"d":"d","e":"Correct","f":2,"g":false,"t":"1day"},"h":{"a":[false,true,false],"b":"10T","f":[1.2,2.3,3.4]}}
+{"a":"Difficult!","b":{"c":{"cbd":[3,4],"cn":{"a":"value"},"d":"d","e":"Correct","f":2,"g":false,"t":"1day"},"d":["1","2","3"]},"h":{"a":[false,true,false],"b":"10T","f":[1.2,2.3,3.4]},"n":{"a":"value"}}
 ```
 
 
 ### Run: go run yml.go
 
 ```bash
-&{example.yml 3 0x22e818 {{0 0} 0 0 0 0} map[a:Easy! b:map[c:map[f:2 g:true t:1day ca:Easy! cbd:[3 4] e:Just Do it] d:[3 4]] h:1.01]}
+&{example.yml 3 0x22e818 {{0 0} 0 0 0 0} map[a:Easy! b:map[c:map[f:2 g:true t:1day cn:map[a:test] cbd:[3 4] e:Just Do it] d:[3 4]] h:1.01 n:map[a:test]]}
 get a Easy!   = Easy!
-copy b.c.ca Easy! = Easy!
+copy b.c.cn.a test! = test
+copy b.c.cn.a value!  = value
+copy n.a test!  = value
 copy b.d to b.c.cbd!  = [3 4]
 get a.b.c def:example = example
 get b.c.e   = Just Do it
@@ -64,7 +68,7 @@ get b.c.f def:100,but 2 = 2
 get b.c.e not exist = 0
 get b.c.g ON,return T = true
 get b.c.x def:true  = true
-get b config    = &{ 0 0x22e818 {{0 0} 0 0 0 0} map[b:map[c:map[f:2 g:true t:1day ca:Easy! cbd:[3 4] e:Just Do it] d:[3 4]]]}
+get b config    = &{ 0 0x22e818 {{0 0} 0 0 0 0} map[b:map[c:map[cn:map[a:value] cbd:[3 4] e:Just Do it f:2 g:true t:1day] d:[3 4]]]}
 get b.d list 3->4 = [3 4]
 get b.c.t time:1day = 24h0m0s
 set a.b.c Correct = <nil>
@@ -99,10 +103,11 @@ last dump =
 a: Difficult!
 b:
   c:
-    ca: Easy!
     cbd:
     - 3
     - 4
+    cn:
+      a: value
     d: d
     e: Correct
     f: 2
@@ -122,4 +127,6 @@ h:
   - 1.2
   - 2.3
   - 3.4
+"n":
+  a: value
 ```

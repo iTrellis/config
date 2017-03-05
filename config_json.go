@@ -5,6 +5,7 @@
 package config
 
 import (
+	// "fmt"
 	"reflect"
 	"strings"
 )
@@ -32,7 +33,6 @@ func (p *jsonConfig) copyDollarSymbol(configs *map[string]interface{}, key strin
 					continue
 				}
 				p.copyDollarSymbol(configs, strings.Join(keys, "."), &vm)
-				p.setKeyValue(configs, k, vm)
 			}
 		case reflect.String:
 			{
@@ -92,7 +92,6 @@ func (p *jsonConfig) setKeyValue(configs *map[string]interface{}, key string, va
 		}
 		vm[tokens[i]] = value
 		value = vm
-
 	}
 	return
 }

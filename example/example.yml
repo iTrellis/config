@@ -9,7 +9,9 @@ b:
     f: 2
     g: ON
     t: 1day
-    ca: ${a}
+    cn: ${n}
     cbd: ${b.d}
   d: [3, 4]
 h: 1.01
+"n":
+  a: "test"

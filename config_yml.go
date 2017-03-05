@@ -24,30 +24,30 @@ func (p *ymlConfig) copyDollarSymbol(configs *map[string]interface{}) {
 		case reflect.Map:
 			vm, ok := v.(map[interface{}]interface{})
 			if !ok {
-				return
+				continue
 			}
-			p.copyMap(*configs, k, &vm)
-			(*configs)[k] = vm
+			p.copyMap(configs, k, &vm)
+			// p.setKeyValue(configs, k, vm)
 		case reflect.String:
 			s, ok := v.(string)
 			if !ok {
-				return
+				continue
 			}
 			_, matched := findStringSubmatchMap(s, includeReg)
 			if !matched {
-				return
+				continue
 			}
 			vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
 			if e != nil {
-				return
+				continue
 			}
-			(*configs)[k] = vm
+			p.setKeyValue(configs, k, vm)
 		}
 	}
 	return
 }
 
-func (p *ymlConfig) copyMap(configs map[string]interface{}, key string, maps *map[interface{}]interface{}) {
+func (p *ymlConfig) copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]interface{}) {
 	tokens := []string{}
 	if key != "" {
 		tokens = append(tokens, key)
@@ -57,12 +57,14 @@ func (p *ymlConfig) copyMap(configs map[string]interface{}, key string, maps *ma
 		keys := append(tokens, k.(string))
 		switch reflect.TypeOf(v).Kind() {
 		case reflect.Map:
-			vm, ok := v.(map[interface{}]interface{})
-			if !ok {
-				continue
+			{
+				vm, ok := v.(map[interface{}]interface{})
+				if !ok {
+					continue
+				}
+				p.copyMap(configs, strings.Join(keys, "."), &vm)
+				p.setKeyValue(configs, strings.Join(keys, "."), vm)
 			}
-			p.copyMap(configs, strings.Join(keys, "."), &vm)
-			(*maps)[k] = vm
 		case reflect.String:
 			{
 				s, ok := v.(string)
@@ -73,11 +75,11 @@ func (p *ymlConfig) copyMap(configs map[string]interface{}, key string, maps *ma
 				if !matched {
 					continue
 				}
-				vm, e := p.getKeyValue(configs, s[2:len(s)-1])
+				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
 				if e != nil {
 					continue
 				}
-				(*maps)[k] = vm
+				p.setKeyValue(configs, strings.Join(keys, "."), vm)
 			}
 		}
 	}
