@@ -20,6 +20,8 @@ func main() {
 	fmt.Println(c)
 	// get key value
 	printT("get a Easy!\t", c.GetString("a"))
+	printT("copy b.c.ca Easy!", c.GetString("b.c.ca"))
+	printT("copy b.d to b.c.cbd!", c.GetIntList("b.c.cbd"))
 	printT("get a.b.c def:example", c.GetString("a.b.c", "example"))
 	printT("get b.c.e\t", c.GetString("b.c.e"))
 	printT("get h is 1.01\t", c.GetFloat("h"))

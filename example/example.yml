@@ -9,5 +9,7 @@ b:
     f: 2
     g: ON
     t: 1day
+    ca: ${a}
+    cbd: ${b.d}
   d: [3, 4]
 h: 1.01

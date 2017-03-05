@@ -25,6 +25,7 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 * dot separator to get values, and if return nil, you should set default
 * You can do like this: c.GetString("a.b.c") Or c.GetString("a.b.c", "default")
 * Supported: .json, .yaml, .yml
+* A: ${X.Y.Z} for finding out X.Y.Z's value and setting into A. [See copy example](example/json.go#L23):[See config](example/example.json#L9)
 
 ```go
 c, e := NewConfig(name)

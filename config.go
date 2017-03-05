@@ -6,7 +6,6 @@ package config
 
 import (
 	"math/big"
-	"regexp"
 	"time"
 )
 
@@ -54,22 +53,4 @@ func NewConfig(name string) (Config, error) {
 	}
 
 	return nil, ErrUnknownSuffixes
-}
-
-func findStringSubmatchMap(s, exp string) (map[string]string, bool) {
-	reg := regexp.MustCompile(exp)
-	captures := make(map[string]string)
-
-	match := reg.FindStringSubmatch(s)
-	if match == nil {
-		return captures, false
-	}
-
-	for i, name := range reg.SubexpNames() {
-		if i == 0 || name == "" {
-			continue
-		}
-		captures[name] = match[i]
-	}
-	return captures, true
 }

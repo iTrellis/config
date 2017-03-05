@@ -4,7 +4,10 @@
 
 package config
 
-import "strings"
+import (
+	"reflect"
+	"strings"
+)
 
 type ymlConfig struct{}
 
@@ -12,6 +15,72 @@ var yConfig = &ymlConfig{}
 
 func NewYamlConfig(name string) (Config, error) {
 	return newAdapterConfig(ReaderTypeYaml, name)
+}
+
+func (p *ymlConfig) copyDollarSymbol(configs *map[string]interface{}) {
+
+	for k, v := range *configs {
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			vm, ok := v.(map[interface{}]interface{})
+			if !ok {
+				return
+			}
+			p.copyMap(*configs, k, &vm)
+			(*configs)[k] = vm
+		case reflect.String:
+			s, ok := v.(string)
+			if !ok {
+				return
+			}
+			_, matched := findStringSubmatchMap(s, includeReg)
+			if !matched {
+				return
+			}
+			vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
+			if e != nil {
+				return
+			}
+			(*configs)[k] = vm
+		}
+	}
+	return
+}
+
+func (p *ymlConfig) copyMap(configs map[string]interface{}, key string, maps *map[interface{}]interface{}) {
+	tokens := []string{}
+	if key != "" {
+		tokens = append(tokens, key)
+	}
+
+	for k, v := range *maps {
+		keys := append(tokens, k.(string))
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			vm, ok := v.(map[interface{}]interface{})
+			if !ok {
+				continue
+			}
+			p.copyMap(configs, strings.Join(keys, "."), &vm)
+			(*maps)[k] = vm
+		case reflect.String:
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				_, matched := findStringSubmatchMap(s, includeReg)
+				if !matched {
+					continue
+				}
+				vm, e := p.getKeyValue(configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				(*maps)[k] = vm
+			}
+		}
+	}
 }
 
 func (p *ymlConfig) getKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {

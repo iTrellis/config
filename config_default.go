@@ -3,6 +3,7 @@ package config
 import (
 	"math/big"
 	"reflect"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -14,6 +15,8 @@ const (
 	timeReg = `^(?P<value>([0-9]+(\.[0-9]+)?))\s*(?P<unit>(nanoseconds|nanosecond|nanos|nano|ns|microseconds|microsecond|micros|micro|us|milliseconds|millisecond|millis|milli|ms|seconds|second|s|minutes|minute|m|hours|hour|h|days|day|d))$`
 
 	bitReg = `^(?P<value>([0-9]+(\.[0-9]+)?))\s*(?P<unit>(b|byte|bytes|kb|kilobyte|kilobytes|mb|megabyte|megabytes|gb|gigabyte|gigabytes|tb|terabyte|terabytes|pb|petabyte|petabytes|eb|exabyte|exabytes|zb|zettabyte|zettabytes|yb|yottabyte|yottabytes|k|ki|kib|kibibyte|kibibytes|m|mi|mib|mebibyte|mebibytes|g|gi|gib|gibibyte|gibibytes|t|ti|tib|tebibyte|tebibytes|p|pi|pib|pebibyte|pebibytes|e|ei|eib|exbibyte|exbibytes|z|zi|zib|zebibyte|zebibytes|y|yi|yib|yobibyte|yobibytes))$`
+
+	includeReg = `\$\{([0-9|a-z|A-Z]|\.)+\}`
 )
 
 // ByteSizes
@@ -70,9 +73,27 @@ func newAdapterConfig(rt ReaderType, name string) (Config, error) {
 	default:
 		return nil, ErrNotSupportedReaderType
 	}
-	e := a.reader.Read(a.name, &a.configs)
+	if e := a.reader.Read(a.name, &a.configs); e != nil {
+		return nil, e
+	}
 
-	return a, e
+	a.copyDollarSymbol()
+
+	return a, nil
+}
+
+func (p *adapterConfig) copyDollarSymbol() {
+	p.locker.RLock()
+	defer p.locker.RUnlock()
+
+	switch p.readerType {
+	case ReaderTypeJson:
+		jConfig.copyDollarSymbol(&p.configs, "", &p.configs)
+	case ReaderTypeYaml:
+		yConfig.copyDollarSymbol(&p.configs)
+	}
+
+	return
 }
 
 // GetTimeDuration return time in p.configs by key
@@ -314,12 +335,11 @@ func (p *adapterConfig) GetIntList(key string) []int {
 
 	var items []int
 	for _, v := range p.GetList(key) {
-		item, ok := v.(int)
-		if !ok {
+		i, e := itypes.ToInt64(v)
+		if e != nil {
 			return nil
 		}
-
-		items = append(items, item)
+		items = append(items, int(i))
 	}
 	return items
 }
@@ -329,12 +349,11 @@ func (p *adapterConfig) GetFloatList(key string) []float64 {
 
 	var items []float64
 	for _, v := range p.GetList(key) {
-		item, ok := v.(float64)
-		if !ok {
+		f, e := itypes.ToFloat64(v)
+		if e != nil {
 			return nil
 		}
-
-		items = append(items, item)
+		items = append(items, f)
 	}
 	return items
 }
@@ -396,4 +415,24 @@ func (p *adapterConfig) Dump() (bs []byte, err error) {
 	defer p.locker.Unlock()
 
 	return p.reader.Dump(p.configs)
+}
+
+// internal functions
+// findStringSubmatchMap
+func findStringSubmatchMap(s, exp string) (map[string]string, bool) {
+	reg := regexp.MustCompile(exp)
+	captures := make(map[string]string)
+
+	match := reg.FindStringSubmatch(s)
+	if match == nil {
+		return captures, false
+	}
+
+	for i, name := range reg.SubexpNames() {
+		if i == 0 || name == "" {
+			continue
+		}
+		captures[name] = match[i]
+	}
+	return captures, true
 }

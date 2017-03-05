@@ -4,7 +4,10 @@
 
 package config
 
-import "strings"
+import (
+	"reflect"
+	"strings"
+)
 
 type jsonConfig struct{}
 
@@ -12,6 +15,44 @@ var jConfig = &jsonConfig{}
 
 func NewJsonConfig(name string) (Config, error) {
 	return newAdapterConfig(ReaderTypeJson, name)
+}
+
+func (p *jsonConfig) copyDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) {
+	tokens := []string{}
+	if key != "" {
+		tokens = append(tokens, key)
+	}
+	for k, v := range *maps {
+		keys := append(tokens, k)
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			{
+				vm, ok := v.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				p.copyDollarSymbol(configs, strings.Join(keys, "."), &vm)
+				p.setKeyValue(configs, k, vm)
+			}
+		case reflect.String:
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				_, matched := findStringSubmatchMap(s, includeReg)
+				if !matched {
+					continue
+				}
+				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				p.setKeyValue(configs, strings.Join(keys, "."), vm)
+			}
+		}
+	}
+	return
 }
 
 func (*jsonConfig) getKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {
