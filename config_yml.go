@@ -13,8 +13,9 @@ type ymlConfig struct{}
 
 var yConfig = &ymlConfig{}
 
+// NewYamlConfig get yaml config reader
 func NewYamlConfig(name string) (Config, error) {
-	return newAdapterConfig(ReaderTypeYaml, name)
+	return newAdapterConfig(ReaderTypeYAML, name)
 }
 
 func (p *ymlConfig) copyDollarSymbol(configs *map[string]interface{}) {

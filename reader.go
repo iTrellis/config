@@ -4,16 +4,21 @@
 
 package config
 
-// ReaderType
+// ReaderType define reader type
 type ReaderType int
 
 const (
+	// ReaderTypeSuffix judge by file suffix
 	ReaderTypeSuffix ReaderType = iota
-	ReaderTypeJson
-	ReaderTypeXml
-	ReaderTypeYaml
+	// ReaderTypeJSON json reader type
+	ReaderTypeJSON
+	// ReaderTypeXML xml reader type
+	ReaderTypeXML
+	// ReaderTypeYAML yaml reader type
+	ReaderTypeYAML
 )
 
+// Reader reader repo
 type Reader interface {
 	// read file into model
 	Read(path string, model interface{}) error
@@ -24,12 +29,12 @@ type Reader interface {
 // New return a reader by ReaderType
 func New(rt ReaderType) Reader {
 	switch rt {
-	case ReaderTypeJson:
-		return NewJsonReader()
-	case ReaderTypeXml:
-		return NewXmlReader()
-	case ReaderTypeYaml:
-		return NewYamlReader()
+	case ReaderTypeJSON:
+		return NewJSONReader()
+	case ReaderTypeXML:
+		return NewXMLReader()
+	case ReaderTypeYAML:
+		return NewYAMLReader()
 	default:
 		return NewSuffixReader()
 	}

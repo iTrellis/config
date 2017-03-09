@@ -66,10 +66,10 @@ func newAdapterConfig(rt ReaderType, name string) (Config, error) {
 	}
 
 	switch rt {
-	case ReaderTypeJson:
-		a.reader = NewJsonReader()
-	case ReaderTypeYaml:
-		a.reader = NewYamlReader()
+	case ReaderTypeJSON:
+		a.reader = NewJSONReader()
+	case ReaderTypeYAML:
+		a.reader = NewYAMLReader()
 	default:
 		return nil, ErrNotSupportedReaderType
 	}
@@ -87,9 +87,9 @@ func (p *adapterConfig) copyDollarSymbol() {
 	defer p.locker.RUnlock()
 
 	switch p.readerType {
-	case ReaderTypeJson:
+	case ReaderTypeJSON:
 		jConfig.copyDollarSymbol(&p.configs, "", &p.configs)
-	case ReaderTypeYaml:
+	case ReaderTypeYAML:
 		yConfig.copyDollarSymbol(&p.configs)
 	}
 
@@ -382,9 +382,9 @@ func (p *adapterConfig) getKeyValue(key string) (vm interface{}, err error) {
 	defer p.locker.RUnlock()
 
 	switch p.readerType {
-	case ReaderTypeJson:
+	case ReaderTypeJSON:
 		return jConfig.getKeyValue(p.configs, key)
-	case ReaderTypeYaml:
+	case ReaderTypeYAML:
 		return yConfig.getKeyValue(p.configs, key)
 	default:
 		return nil, ErrNotSupportedReaderType
@@ -400,9 +400,9 @@ func (p *adapterConfig) SetKeyValue(key string, value interface{}) (err error) {
 	defer p.locker.Unlock()
 
 	switch p.readerType {
-	case ReaderTypeJson:
+	case ReaderTypeJSON:
 		return jConfig.setKeyValue(&p.configs, key, value)
-	case ReaderTypeYaml:
+	case ReaderTypeYAML:
 		return yConfig.setKeyValue(&p.configs, key, value)
 	default:
 		return ErrNotSupportedReaderType

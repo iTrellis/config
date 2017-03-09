@@ -16,8 +16,8 @@ type defYamlReader struct {
 
 var yamlReader = &defYamlReader{}
 
-// NewXmlReader return a yaml reader
-func NewYamlReader() Reader {
+// NewYAMLReader return a yaml reader
+func NewYAMLReader() Reader {
 	return yamlReader
 }
 

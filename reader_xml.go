@@ -9,18 +9,18 @@ import (
 	"sync"
 )
 
-type defXmlReader struct {
+type defXMLReader struct {
 	mu sync.Mutex
 }
 
-var xmlReader = &defXmlReader{}
+var xmlReader = &defXMLReader{}
 
-// NewXmlReader return a xml reader
-func NewXmlReader() Reader {
+// NewXMLReader return xml config reader
+func NewXMLReader() Reader {
 	return xmlReader
 }
 
-func (p *defXmlReader) Read(name string, model interface{}) error {
+func (p *defXMLReader) Read(name string, model interface{}) error {
 	if name == "" {
 		return ErrInvalidFilePath
 	}
@@ -33,6 +33,6 @@ func (p *defXmlReader) Read(name string, model interface{}) error {
 	return xml.Unmarshal(data, model)
 }
 
-func (*defXmlReader) Dump(v interface{}) ([]byte, error) {
+func (*defXMLReader) Dump(v interface{}) ([]byte, error) {
 	return xml.Marshal(v)
 }

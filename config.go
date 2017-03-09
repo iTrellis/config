@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-//  Config
+// Config manager data functions
 type Config interface {
 	// get a object
 	GetInterface(key string, defValue ...interface{}) (res interface{})
@@ -46,9 +46,9 @@ type Config interface {
 // NewConfig return Config by file's path, judge path's suffix, supported .json, .yml, .yaml
 func NewConfig(name string) (Config, error) {
 	switch fileToReaderType(name) {
-	case ReaderTypeJson:
-		return NewJsonConfig(name)
-	case ReaderTypeYaml:
+	case ReaderTypeJSON:
+		return NewJSONConfig(name)
+	case ReaderTypeYAML:
 		return NewYamlConfig(name)
 	}
 

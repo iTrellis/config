@@ -15,7 +15,7 @@ type defSuffixReader struct {
 	name string
 }
 
-// NewJsonReader return a suffix reader
+// NewSuffixReader return a suffix reader
 // supportted: .json, .xml, .yaml, .yml
 func NewSuffixReader() Reader {
 	return &defSuffixReader{}
@@ -52,11 +52,11 @@ func (p *defSuffixReader) Dump(v interface{}) ([]byte, error) {
 	defer p.mu.Unlock()
 
 	switch fileToReaderType(p.name) {
-	case ReaderTypeJson:
+	case ReaderTypeJSON:
 		return jsonReader.Dump(v)
-	case ReaderTypeXml:
+	case ReaderTypeXML:
 		return xmlReader.Dump(v)
-	case ReaderTypeYaml:
+	case ReaderTypeYAML:
 		return yamlReader.Dump(v)
 	}
 
@@ -66,11 +66,11 @@ func (p *defSuffixReader) Dump(v interface{}) ([]byte, error) {
 func fileToReaderType(name string) ReaderType {
 	switch {
 	case strings.HasSuffix(name, ".json"):
-		return ReaderTypeJson
+		return ReaderTypeJSON
 	case strings.HasSuffix(name, ".xml"):
-		return ReaderTypeXml
+		return ReaderTypeXML
 	case strings.HasSuffix(name, ".yml"), strings.HasSuffix(name, ".yaml"):
-		return ReaderTypeYaml
+		return ReaderTypeYAML
 	}
 
 	return ReaderTypeSuffix

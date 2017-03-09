@@ -10,20 +10,20 @@ import (
 	"sync"
 )
 
-type defJsonReader struct {
+type defJSONReader struct {
 	mu sync.Mutex
 
 	name string
 }
 
-var jsonReader = &defJsonReader{}
+var jsonReader = &defJSONReader{}
 
-// NewJsonReader return a json reader
-func NewJsonReader() Reader {
+// NewJSONReader return a json reader
+func NewJSONReader() Reader {
 	return jsonReader
 }
 
-func (p *defJsonReader) Read(name string, model interface{}) error {
+func (p *defJSONReader) Read(name string, model interface{}) error {
 	if name == "" {
 		return ErrInvalidFilePath
 	}
@@ -41,6 +41,6 @@ func (p *defJsonReader) Read(name string, model interface{}) error {
 	return decoder.Decode(model)
 }
 
-func (*defJsonReader) Dump(v interface{}) ([]byte, error) {
+func (*defJSONReader) Dump(v interface{}) ([]byte, error) {
 	return json.Marshal(v)
 }

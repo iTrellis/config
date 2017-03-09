@@ -8,6 +8,7 @@ import (
 	"errors"
 )
 
+// Errors
 var (
 	ErrNotMap                 = errors.New("interface not map")
 	ErrValueNil               = errors.New("value is nil")

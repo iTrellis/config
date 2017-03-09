@@ -35,6 +35,7 @@ c.GetString("a.b.c")
 ### Feature
 
 ```go
+// Config manager data functions
 type Config interface {
 	// get a object
 	GetInterface(key string, defValue ...interface{}) (res interface{})
@@ -83,6 +84,7 @@ go run example/yml.go
 ### Reader Repo
 
 ```go
+// Reader reader repo
 type Reader interface {
 	// read file into model
 	Read(path string, model interface{}) error
@@ -101,9 +103,9 @@ if err := r.Read(filename, model); err != nil {
 ### Readers
 
 ```go
-jReader := NewJsonReader()
-xReader := NewXmlReader()
-yReader := NewYamlReader()
+jReader := NewJSONReader()
+xReader := NewXMLReader()
+yReader := NewYAMLReader()
 ```
 
 * if you want to judge reader by file's suffix
@@ -112,9 +114,9 @@ yReader := NewYamlReader()
 sReader := NewSuffixReader()
 ```
 
-* .json = NewJsonReader()
-* .xml = NewXmlReader()
-* .yaml | .yml = NewYamlReader()
+* .json = NewJSONReader()
+* .xml = NewXMLReader()
+* .yaml | .yml = NewYAMLReader()
 
 ### TODO
 

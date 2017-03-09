@@ -14,8 +14,9 @@ type jsonConfig struct{}
 
 var jConfig = &jsonConfig{}
 
-func NewJsonConfig(name string) (Config, error) {
-	return newAdapterConfig(ReaderTypeJson, name)
+// NewJSONConfig get json config reader
+func NewJSONConfig(name string) (Config, error) {
+	return newAdapterConfig(ReaderTypeJSON, name)
 }
 
 func (p *jsonConfig) copyDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) {
