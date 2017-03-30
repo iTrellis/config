@@ -8,6 +8,8 @@ import (
 	// "fmt"
 	"reflect"
 	"strings"
+
+	"github.com/go-trellis/formats"
 )
 
 type jsonConfig struct{}
@@ -41,7 +43,7 @@ func (p *jsonConfig) copyDollarSymbol(configs *map[string]interface{}, key strin
 				if !ok {
 					continue
 				}
-				_, matched := findStringSubmatchMap(s, includeReg)
+				_, matched := formats.FindStringSubmatchMap(s, includeReg)
 				if !matched {
 					continue
 				}

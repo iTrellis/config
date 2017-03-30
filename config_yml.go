@@ -7,6 +7,8 @@ package config
 import (
 	"reflect"
 	"strings"
+
+	"github.com/go-trellis/formats"
 )
 
 type ymlConfig struct{}
@@ -23,26 +25,28 @@ func (p *ymlConfig) copyDollarSymbol(configs *map[string]interface{}) {
 	for k, v := range *configs {
 		switch reflect.TypeOf(v).Kind() {
 		case reflect.Map:
-			vm, ok := v.(map[interface{}]interface{})
-			if !ok {
-				continue
+			{
+				vm, ok := v.(map[interface{}]interface{})
+				if !ok {
+					continue
+				}
+				p.copyMap(configs, k, &vm)
 			}
-			p.copyMap(configs, k, &vm)
-			// p.setKeyValue(configs, k, vm)
 		case reflect.String:
-			s, ok := v.(string)
-			if !ok {
-				continue
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
+					continue
+				}
+				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				p.setKeyValue(configs, k, vm)
 			}
-			_, matched := findStringSubmatchMap(s, includeReg)
-			if !matched {
-				continue
-			}
-			vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
-			if e != nil {
-				continue
-			}
-			p.setKeyValue(configs, k, vm)
 		}
 	}
 	return
@@ -72,8 +76,7 @@ func (p *ymlConfig) copyMap(configs *map[string]interface{}, key string, maps *m
 				if !ok {
 					continue
 				}
-				_, matched := findStringSubmatchMap(s, includeReg)
-				if !matched {
+				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
 					continue
 				}
 				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
@@ -91,19 +94,18 @@ func (p *ymlConfig) getKeyValue(configs map[string]interface{}, key string) (vm 
 	tokens := strings.Split(key, ".")
 	vm = configs[tokens[0]]
 	for i, t := range tokens {
-		if i != 0 {
-			v, ok := vm.(map[interface{}]interface{})
-			if !ok {
-				return nil, ErrNotMap
-			}
-			vm = v[t]
+		if i == 0 {
+			continue
 		}
+		v, ok := vm.(map[interface{}]interface{})
+		if !ok {
+			return nil, ErrNotMap
+		}
+		vm = v[t]
 	}
-
 	if vm == nil {
 		err = ErrValueNil
 	}
-
 	return
 }
 
