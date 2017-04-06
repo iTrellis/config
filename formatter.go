@@ -14,10 +14,19 @@ import (
 // MapValueGetter get a value from map
 type MapValueGetter interface {
 	GetMapKeyValue(ms interface{}, key string) (interface{}, error)
+	GetMapKeyValueList(ms interface{}, key string) ([]interface{}, error)
+
 	GetMapKeyValueString(ms interface{}, key string) (string, error)
+	GetMapKeyValueStringList(ms interface{}, key string) ([]string, error)
+
 	GetMapKeyValueInt(ms interface{}, key string) (int, error)
+	GetMapKeyValueIntList(ms interface{}, key string) ([]int, error)
+
 	GetMapKeyValueInt64(ms interface{}, key string) (int64, error)
+	GetMapKeyValueInt64List(ms interface{}, key string) ([]int64, error)
+
 	GetMapKeyValueBool(ms interface{}, key string) (bool, error)
+	GetMapKeyValueBoolList(ms interface{}, key string) ([]bool, error)
 	GetMapKeyValueTimeDuration(ms interface{}, key string) (time.Duration, error)
 }
 
