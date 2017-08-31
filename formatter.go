@@ -30,6 +30,8 @@ type MapValueGetter interface {
 	GetMapKeyValueTimeDuration(ms interface{}, key string) (time.Duration, error)
 }
 
+var defaultGetter = MapGetter()
+
 // MapGetter get map value getter
 func MapGetter() MapValueGetter {
 	return (*getter)(nil)
@@ -47,6 +49,11 @@ func (*getter) GetMapKeyValue(ms interface{}, key string) (interface{}, error) {
 	s, ok := ms.(map[string]interface{})
 	if ok {
 		return s[key], nil
+	}
+
+	o, ok := ms.(Options)
+	if ok {
+		return o[key], nil
 	}
 
 	return nil, fmt.Errorf("config invalid: %v", ms)
