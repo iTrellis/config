@@ -1,6 +1,6 @@
 ## example
 
-### Run: go run json.go
+### Run: go run json/main.go
 
 ```bash
 &{example.json 1 0x213650 {{0 0} 0 0 0 0} map[h:1.01 n:map[a:test] a:Easy! b:map[c:map[f:2 g:ON t:1day cn:map[a:test] cbd:[3 4] e:Just Do it] d:[3 4]]]}
@@ -52,7 +52,7 @@ last dump =
 ```
 
 
-### Run: go run yml.go
+### Run: go run yml/main.go
 
 ```bash
 &{example.yml 3 0x22e818 {{0 0} 0 0 0 0} map[a:Easy! b:map[c:map[f:2 g:true t:1day cn:map[a:test] cbd:[3 4] e:Just Do it] d:[3 4]] h:1.01 n:map[a:test]]}

@@ -15,6 +15,14 @@ func (p Options) String(key string) (string, error) {
 	return defaultGetter.GetMapKeyValueString(p, key)
 }
 
+// Bool return bool(value) with key in options
+func (p Options) Bool(key string) (bool, error) {
+	if 0 == len(p) {
+		return false, nil
+	}
+	return defaultGetter.GetMapKeyValueBool(p, key)
+}
+
 // Int return int(value) with key in options
 func (p Options) Int(key string) (int, error) {
 	if 0 == len(p) {
