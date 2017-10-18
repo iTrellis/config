@@ -1,6 +1,11 @@
+// GNU GPL v3 License
+
+// Copyright (c) 2017 github.com:go-trellis
+
 {
-  "a": "Easy!",
-  "b": {
+  "a": "Easy!", /* Test 1*/
+  /* Test 2 */
+  "b": { // Test 3
     "c": {
       "e": "Just Do it",
       "f": 2,
@@ -9,13 +14,18 @@
       "cn": "${n}",
       "cbd": "${b.d}"
     },
+  /**  Test 4 
+  "x": "http://www.example.com"
+  */
     "d": [
       3,
       4
     ]
   },
-  "h": 1.01,
+// Test 5
+  "h": 1.01,//Test 6
   "n": {
-    "a": "test"
-  }
+    "a": "test"//Test 7
+  },
+  "x": "http://www.example.com"
 }
