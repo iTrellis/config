@@ -38,3 +38,23 @@ func (p Options) Int64(key string) (int64, error) {
 	}
 	return defaultGetter.GetMapKeyValueInt64(p, key)
 }
+
+// Get get string value by key
+func (p Options) Get(key string) string {
+	v, _ := p.String(key)
+	return v
+}
+
+// Set set key value into options
+func (p Options) Set(key string, value string) {
+	p[key] = value
+}
+
+// Keys get keys in option map
+func (p Options) Keys() []string {
+	keys := make([]string, 0, len(p))
+	for k := range p {
+		keys = append(keys, k)
+	}
+	return keys
+}
