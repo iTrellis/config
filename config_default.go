@@ -56,6 +56,17 @@ func newAdapterConfig(rt ReaderType, name string) (Config, error) {
 	return a, nil
 }
 
+func (p *adapterConfig) GetKeys() []string {
+	p.locker.RLock()
+	defer p.locker.RUnlock()
+
+	var keys []string
+	for key := range p.configs {
+		keys = append(keys, key)
+	}
+	return keys
+}
+
 func (p *adapterConfig) copyDollarSymbol() {
 	p.locker.RLock()
 	defer p.locker.RUnlock()

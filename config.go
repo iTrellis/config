@@ -41,6 +41,8 @@ type Config interface {
 	SetKeyValue(key string, value interface{}) (err error)
 	// get all config
 	Dump() (bs []byte, err error)
+	// get all keys
+	GetKeys() []string
 }
 
 // NewConfig return Config by file's path, judge path's suffix, supported .json, .yml, .yaml

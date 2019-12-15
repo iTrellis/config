@@ -72,6 +72,7 @@ func main() {
 
 	printT("set b.d [\"1\",\"2\",\"3\"]", c.SetKeyValue("b.d", []string{"1", "2", "3"}))
 	printT("get b.d []string 1->3", c.GetStringList("b.d"))
+	printT("get keys", c.GetKeys())
 
 	bs, _ := c.Dump()
 	printT("last dump", "\n"+string(bs))
