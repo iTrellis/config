@@ -124,5 +124,5 @@ func (p *getter) GetMapKeyValueTimeDuration(ms interface{}, key string) (time.Du
 }
 
 func (p *getter) GenMapConfig(ms map[string]interface{}) Config {
-	return &adapterConfig{readerType: ReaderMap, reader: nil, configs: ms}
+	return &adapterConfig{readerType: ReaderTypeMap, reader: nil, configs: ms}
 }

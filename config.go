@@ -61,3 +61,13 @@ func NewConfig(name string) (Config, error) {
 
 	return nil, ErrUnknownSuffixes
 }
+
+// NewYamlConfig get yaml config reader
+func NewYamlConfig(name string) (Config, error) {
+	return newAdapterConfig(ReaderTypeYAML, name)
+}
+
+// NewJSONConfig get json config reader
+func NewJSONConfig(name string) (Config, error) {
+	return newAdapterConfig(ReaderTypeJSON, name)
+}

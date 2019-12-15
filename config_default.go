@@ -329,9 +329,9 @@ func (p *adapterConfig) getKeyValue(key string) (vm interface{}, err error) {
 
 	switch p.readerType {
 	case ReaderTypeJSON:
-		return jConfig.getKeyValue(p.configs, key)
-	case ReaderTypeYAML:
-		return yConfig.getKeyValue(p.configs, key)
+		return getStringKeyValue(p.configs, key)
+	case ReaderTypeYAML, ReaderTypeMap:
+		return getInterfaceKeyValue(p.configs, key)
 	default:
 		return nil, ErrNotSupportedReaderType
 	}
@@ -347,9 +347,9 @@ func (p *adapterConfig) SetKeyValue(key string, value interface{}) (err error) {
 
 	switch p.readerType {
 	case ReaderTypeJSON:
-		return jConfig.setKeyValue(&p.configs, key, value)
+		return setStringKeyValue(&p.configs, key, value)
 	case ReaderTypeYAML:
-		return yConfig.setKeyValue(&p.configs, key, value)
+		return setInterfaceKeyValue(&p.configs, key, value)
 	default:
 		return ErrNotSupportedReaderType
 	}
