@@ -5,10 +5,7 @@
 package config
 
 import (
-	"reflect"
 	"strings"
-
-	"github.com/go-trellis/formats"
 )
 
 type ymlConfig struct{}
@@ -18,75 +15,6 @@ var yConfig = &ymlConfig{}
 // NewYamlConfig get yaml config reader
 func NewYamlConfig(name string) (Config, error) {
 	return newAdapterConfig(ReaderTypeYAML, name)
-}
-
-func (p *ymlConfig) copyDollarSymbol(configs *map[string]interface{}) {
-
-	for k, v := range *configs {
-		switch reflect.TypeOf(v).Kind() {
-		case reflect.Map:
-			{
-				vm, ok := v.(map[interface{}]interface{})
-				if !ok {
-					continue
-				}
-				p.copyMap(configs, k, &vm)
-			}
-		case reflect.String:
-			{
-				s, ok := v.(string)
-				if !ok {
-					continue
-				}
-				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
-					continue
-				}
-				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
-				if e != nil {
-					continue
-				}
-				p.setKeyValue(configs, k, vm)
-			}
-		}
-	}
-	return
-}
-
-func (p *ymlConfig) copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]interface{}) {
-	tokens := []string{}
-	if key != "" {
-		tokens = append(tokens, key)
-	}
-
-	for k, v := range *maps {
-		keys := append(tokens, k.(string))
-		switch reflect.TypeOf(v).Kind() {
-		case reflect.Map:
-			{
-				vm, ok := v.(map[interface{}]interface{})
-				if !ok {
-					continue
-				}
-				p.copyMap(configs, strings.Join(keys, "."), &vm)
-				p.setKeyValue(configs, strings.Join(keys, "."), vm)
-			}
-		case reflect.String:
-			{
-				s, ok := v.(string)
-				if !ok {
-					continue
-				}
-				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
-					continue
-				}
-				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
-				if e != nil {
-					continue
-				}
-				p.setKeyValue(configs, strings.Join(keys, "."), vm)
-			}
-		}
-	}
 }
 
 func (p *ymlConfig) getKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {

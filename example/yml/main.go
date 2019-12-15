@@ -20,7 +20,9 @@ func main() {
 	fmt.Println(c)
 	// get key value
 	printT("get a Easy!\t", c.GetString("a"))
+	printT("get map a", c.GetMap("a"))
 	printT("copy b.c.cn.a test!", c.GetInterface("b.c.cn.a"))
+	printT("get map b", c.GetMap("b"))
 	c.SetKeyValue("b.c.cn.a", "value")
 	printT("copy b.c.cn.a value!", c.GetInterface("b.c.cn.a"))
 	printT("copy n.a value!", c.GetInterface("n.a"))

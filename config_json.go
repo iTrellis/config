@@ -5,11 +5,7 @@
 package config
 
 import (
-	// "fmt"
-	"reflect"
 	"strings"
-
-	"github.com/go-trellis/formats"
 )
 
 type jsonConfig struct{}
@@ -19,43 +15,6 @@ var jConfig = &jsonConfig{}
 // NewJSONConfig get json config reader
 func NewJSONConfig(name string) (Config, error) {
 	return newAdapterConfig(ReaderTypeJSON, name)
-}
-
-func (p *jsonConfig) copyDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) {
-	tokens := []string{}
-	if key != "" {
-		tokens = append(tokens, key)
-	}
-	for k, v := range *maps {
-		keys := append(tokens, k)
-		switch reflect.TypeOf(v).Kind() {
-		case reflect.Map:
-			{
-				vm, ok := v.(map[string]interface{})
-				if !ok {
-					continue
-				}
-				p.copyDollarSymbol(configs, strings.Join(keys, "."), &vm)
-			}
-		case reflect.String:
-			{
-				s, ok := v.(string)
-				if !ok {
-					continue
-				}
-				_, matched := formats.FindStringSubmatchMap(s, includeReg)
-				if !matched {
-					continue
-				}
-				vm, e := p.getKeyValue(*configs, s[2:len(s)-1])
-				if e != nil {
-					continue
-				}
-				p.setKeyValue(configs, strings.Join(keys, "."), vm)
-			}
-		}
-	}
-	return
 }
 
 func (*jsonConfig) getKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {

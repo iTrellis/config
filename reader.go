@@ -16,6 +16,8 @@ const (
 	ReaderTypeXML
 	// ReaderTypeYAML yaml reader type
 	ReaderTypeYAML
+	// ReaderMap map reader type
+	ReaderMap
 )
 
 // Reader reader repo

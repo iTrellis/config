@@ -55,12 +55,19 @@ type Config interface {
 	GetTimeDuration(key string, defValue ...time.Duration) time.Duration
 	// get byte size by (int)(uint), exp: 1k, 1m
 	GetByteSize(key string) *big.Int
-	// get key config
+	// get map value
+	GetMap(key string) Options
+	// get key's config
 	GetConfig(key string) Config
+	// get key's values if values can be Config, or panic
+	GetValuesConfig(key string) Config
 	// set key's value into config
 	SetKeyValue(key string, value interface{}) (err error)
 	// get all config
 	Dump() (bs []byte, err error)
+	// get all keys
+	GetKeys() []string
+	Copy() Config
 }
 ```
 

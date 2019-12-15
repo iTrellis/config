@@ -28,6 +28,8 @@ type MapValueGetter interface {
 	GetMapKeyValueBool(ms interface{}, key string) (bool, error)
 	GetMapKeyValueBoolList(ms interface{}, key string) ([]bool, error)
 	GetMapKeyValueTimeDuration(ms interface{}, key string) (time.Duration, error)
+
+	GenMapConfig(ms map[string]interface{}) Config
 }
 
 var defaultGetter = MapGetter()
@@ -119,4 +121,8 @@ func (p *getter) GetMapKeyValueTimeDuration(ms interface{}, key string) (time.Du
 	}
 
 	return formats.ParseStringTime(s, 0), nil
+}
+
+func (p *getter) GenMapConfig(ms map[string]interface{}) Config {
+	return &adapterConfig{readerType: ReaderMap, reader: nil, configs: ms}
 }

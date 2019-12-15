@@ -51,9 +51,7 @@ func newAdapterConfig(rt ReaderType, name string) (Config, error) {
 		return nil, e
 	}
 
-	a.copyDollarSymbol()
-
-	return a, nil
+	return a.copy(), nil
 }
 
 func (p *adapterConfig) GetKeys() []string {
@@ -67,18 +65,19 @@ func (p *adapterConfig) GetKeys() []string {
 	return keys
 }
 
-func (p *adapterConfig) copyDollarSymbol() {
+func (p *adapterConfig) copy() Config {
 	p.locker.RLock()
 	defer p.locker.RUnlock()
 
-	switch p.readerType {
-	case ReaderTypeJSON:
-		jConfig.copyDollarSymbol(&p.configs, "", &p.configs)
-	case ReaderTypeYAML:
-		yConfig.copyDollarSymbol(&p.configs)
-	}
+	values := DeepCopy(p.configs)
 
-	return
+	valuesMap := values.(map[string]interface{})
+	return &adapterConfig{
+		name:       p.name,
+		readerType: p.readerType,
+		reader:     p.reader,
+		configs:    valuesMap,
+	}
 }
 
 // GetTimeDuration return time in p.configs by key
@@ -269,6 +268,21 @@ func (p *adapterConfig) GetFloatList(key string) []float64 {
 	return items
 }
 
+// get map value
+func (p *adapterConfig) GetMap(key string) Options {
+
+	vm, err := p.getKeyValue(key)
+	if err != nil {
+		return nil
+	}
+
+	mapVM, ok := vm.(map[string]interface{})
+	if ok {
+		return mapVM
+	}
+	return nil
+}
+
 // GetConfig return object config in p.configs by key
 func (p *adapterConfig) GetConfig(key string) Config {
 
@@ -283,6 +297,16 @@ func (p *adapterConfig) GetConfig(key string) Config {
 	}
 
 	return c
+}
+
+// get key's values if values can be Config, or panic
+func (p *adapterConfig) GetValuesConfig(key string) Config {
+	opt := p.GetMap(key)
+	if opt == nil {
+		return nil
+	}
+
+	return MapGetter().GenMapConfig(opt)
 }
 
 func (p *adapterConfig) getKeyValue(key string) (vm interface{}, err error) {
@@ -326,4 +350,9 @@ func (p *adapterConfig) Dump() (bs []byte, err error) {
 	defer p.locker.Unlock()
 
 	return p.reader.Dump(p.configs)
+}
+
+// Dump return p.configs' bytes
+func (p *adapterConfig) Copy() Config {
+	return p.copy()
 }
