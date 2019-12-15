@@ -280,7 +280,18 @@ func (p *adapterConfig) GetMap(key string) Options {
 	if ok {
 		return mapVM
 	}
-	return nil
+
+	mapVMs, ok := vm.(map[interface{}]interface{})
+	if !ok {
+		return nil
+	}
+
+	result := make(map[string]interface{})
+	for k, v := range mapVMs {
+		sk, _ := k.(string)
+		result[sk] = v
+	}
+	return result
 }
 
 // GetConfig return object config in p.configs by key
