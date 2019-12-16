@@ -65,7 +65,6 @@ func (p *AdapterConfig) init(opts ...Option) (err error) {
 		}
 
 		err = p.reader.Read(p.ConfigFile, &p.configs)
-		return
 	}
 
 	if len(p.ConfigString) > 0 {
@@ -80,6 +79,11 @@ func (p *AdapterConfig) init(opts ...Option) (err error) {
 			return ErrNotSupportedReaderType
 		}
 	}
+	if err != nil {
+		return ErrValueNil
+	}
+
+	p.copyDollarSymbol()
 
 	return
 }
@@ -398,4 +402,18 @@ func (p *AdapterConfig) Dump() (bs []byte, err error) {
 // Copy return a copy
 func (p *AdapterConfig) Copy() Config {
 	return p.copy()
+}
+
+func (p *AdapterConfig) copyDollarSymbol() {
+	p.locker.RLock()
+	defer p.locker.RUnlock()
+
+	switch p.readerType {
+	case ReaderTypeJSON:
+		copyJSONDollarSymbol(&p.configs, "", &p.configs)
+	case ReaderTypeYAML:
+		copyYAMLDollarSymbol(&p.configs)
+	}
+
+	return
 }

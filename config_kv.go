@@ -4,7 +4,118 @@
 
 package config
 
-import "strings"
+import (
+	"reflect"
+	"strings"
+
+	"github.com/go-trellis/formats"
+)
+
+func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) {
+	tokens := []string{}
+	if key != "" {
+		tokens = append(tokens, key)
+	}
+	for k, v := range *maps {
+		keys := append(tokens, k)
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			{
+				vm, ok := v.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				copyJSONDollarSymbol(configs, strings.Join(keys, "."), &vm)
+			}
+		case reflect.String:
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				_, matched := formats.FindStringSubmatchMap(s, includeReg)
+				if !matched {
+					continue
+				}
+				vm, e := getStringKeyValue(*configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				setStringKeyValue(configs, strings.Join(keys, "."), vm)
+			}
+		}
+	}
+	return
+}
+
+func copyYAMLDollarSymbol(configs *map[string]interface{}) {
+
+	for k, v := range *configs {
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			{
+				vm, ok := v.(map[interface{}]interface{})
+				if !ok {
+					continue
+				}
+				copyMap(configs, k, &vm)
+			}
+		case reflect.String:
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
+					continue
+				}
+				vm, e := getInterfaceKeyValue(*configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				setInterfaceKeyValue(configs, k, vm)
+			}
+		}
+	}
+	return
+}
+
+func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]interface{}) {
+	tokens := []string{}
+	if key != "" {
+		tokens = append(tokens, key)
+	}
+
+	for k, v := range *maps {
+		keys := append(tokens, k.(string))
+		switch reflect.TypeOf(v).Kind() {
+		case reflect.Map:
+			{
+				vm, ok := v.(map[interface{}]interface{})
+				if !ok {
+					continue
+				}
+				copyMap(configs, strings.Join(keys, "."), &vm)
+				setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+			}
+		case reflect.String:
+			{
+				s, ok := v.(string)
+				if !ok {
+					continue
+				}
+				if _, matched := formats.FindStringSubmatchMap(s, includeReg); !matched {
+					continue
+				}
+				vm, e := getInterfaceKeyValue(*configs, s[2:len(s)-1])
+				if e != nil {
+					continue
+				}
+				setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+			}
+		}
+	}
+}
 
 func getInterfaceKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {
 

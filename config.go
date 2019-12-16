@@ -71,6 +71,9 @@ type Config interface {
 
 // NewConfig return Config by file's path, judge path's suffix, supported .json, .yml, .yaml
 func NewConfig(name string) (Config, error) {
+	if len(name) == 0 {
+		return nil, ErrInvalidFilePath
+	}
 	return NewConfigOptions(OptionFile(name))
 }
 

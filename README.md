@@ -16,6 +16,8 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 
 ### Config
 
+> not supported "*.xml": now go encoding/xml is not supported map[string]interface{}
+
 * dot separator to get values, and if return nil, you should set default
 * You can do like this: c.GetString("a.b.c") Or c.GetString("a.b.c", "default")
 * Supported: .json, .yaml, .yml
@@ -104,6 +106,7 @@ type Reader interface {
 
 ### Readers
 
+
 ```go
 	jReader := NewJSONReader()
 	xReader := NewXMLReader()
@@ -122,4 +125,6 @@ type Reader interface {
 
 ### TODO
 
-supported Config .xml: now go encoding/xml not supported map[string]interface{}
+* Add Test
+
+
