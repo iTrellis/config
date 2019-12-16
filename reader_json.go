@@ -12,8 +12,6 @@ import (
 
 type defJSONReader struct {
 	mu sync.Mutex
-
-	name string
 }
 
 var jsonReader = &defJSONReader{}
@@ -24,35 +22,33 @@ func NewJSONReader() Reader {
 }
 
 func (p *defJSONReader) Read(name string, model interface{}) error {
-	if name == "" {
+	if len(name) == 0 {
 		return ErrInvalidFilePath
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	data, err := p.readFile(name)
-	if err != nil {
-		return err
-	}
-
-	decoder := json.NewDecoder(bytes.NewBuffer(data))
-	decoder.UseNumber()
-
-	return decoder.Decode(model)
+	return ReadJSONFile(name, model)
 }
 
 func (*defJSONReader) Dump(v interface{}) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-func (p *defJSONReader) readFile(name string) ([]byte, error) {
+// ReadJSONFile 读取Json文件数据到Models
+func ReadJSONFile(name string, model interface{}) error {
 	data, err := readFile(name)
 	if err != nil {
-		return nil, err
+		return err
 	}
+	return ParseJSONConfig(data, model)
+}
+
+// ParseJSONConfig 解析Json配置
+func ParseJSONConfig(data []byte, model interface{}) error {
 	var escaped bool // string value flag
 	var comments int // 1 line; 2 multi line
-	var returns []byte
+	var result []byte
 
 	length := len(data)
 	for i, w := 0, 0; i < length; i += w {
@@ -85,12 +81,12 @@ func (p *defJSONReader) readFile(name string) ([]byte, error) {
 				} else {
 					escaped = true
 				}
-				returns = append(returns, data[i])
+				result = append(result, data[i])
 			}
 		case '/':
 			{
 				if escaped || length == i+1 {
-					returns = append(returns, data[i])
+					result = append(result, data[i])
 					break
 				}
 				switch data[i+1] {
@@ -101,15 +97,19 @@ func (p *defJSONReader) readFile(name string) ([]byte, error) {
 					w = 2
 					comments = 2
 				default:
-					returns = append(returns, data[i])
+					result = append(result, data[i])
 				}
 			}
 		default:
 			if escaped || !isWhitespace(data[i]) {
-				returns = append(returns, data[i])
+				result = append(result, data[i])
 			}
 
 		}
 	}
-	return returns, nil
+
+	decoder := json.NewDecoder(bytes.NewBuffer(result))
+	decoder.UseNumber()
+
+	return decoder.Decode(model)
 }

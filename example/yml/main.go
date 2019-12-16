@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	c, e := config.NewConfig("../example.yml")
+	c, e := config.NewConfig("../../example.yml")
 	if e != nil {
 		fmt.Println(e)
 		return

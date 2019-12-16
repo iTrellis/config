@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	c, e := config.NewConfig("../example.json")
+	c, e := config.NewConfig("../../example.json")
 	if e != nil {
 		fmt.Println(e)
 		return

@@ -22,7 +22,7 @@ func NewSuffixReader() Reader {
 }
 
 func (p *defSuffixReader) Read(name string, model interface{}) error {
-	if name == "" {
+	if len(name) == 0 {
 		return ErrInvalidFilePath
 	}
 
@@ -36,7 +36,8 @@ func (p *defSuffixReader) Read(name string, model interface{}) error {
 		return jsonReader.Read(p.name, model)
 	case strings.HasSuffix(p.name, ".xml"):
 		return xmlReader.Read(p.name, model)
-	case strings.HasSuffix(p.name, ".yml"), strings.HasSuffix(p.name, ".yaml"):
+	case strings.HasSuffix(p.name, ".yml"),
+		strings.HasSuffix(p.name, ".yaml"):
 		return yamlReader.Read(p.name, model)
 	default:
 		return ErrUnknownSuffixes
@@ -69,7 +70,8 @@ func fileToReaderType(name string) ReaderType {
 		return ReaderTypeJSON
 	case strings.HasSuffix(name, ".xml"):
 		return ReaderTypeXML
-	case strings.HasSuffix(name, ".yml"), strings.HasSuffix(name, ".yaml"):
+	case strings.HasSuffix(name, ".yml"),
+		strings.HasSuffix(name, ".yaml"):
 		return ReaderTypeYAML
 	}
 

@@ -26,13 +26,23 @@ func (p *defXMLReader) Read(name string, model interface{}) error {
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	data, err := readFile(name)
+	data, err := ReadXMLFile(name)
 	if err != nil {
 		return err
 	}
-	return xml.Unmarshal(data, model)
+	return ParseXMLConfig(data, model)
 }
 
 func (*defXMLReader) Dump(v interface{}) ([]byte, error) {
 	return xml.Marshal(v)
+}
+
+// ReadXMLFile 读取yaml文件的配置信息
+func ReadXMLFile(name string) ([]byte, error) {
+	return readFile(name)
+}
+
+// ParseXMLConfig 解析yaml的配置信息
+func ParseXMLConfig(data []byte, model interface{}) error {
+	return xml.Unmarshal(data, model)
 }

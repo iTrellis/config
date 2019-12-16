@@ -22,18 +22,28 @@ func NewYAMLReader() Reader {
 }
 
 func (p *defYamlReader) Read(name string, model interface{}) error {
-	if name == "" {
+	if len(name) == 0 {
 		return ErrInvalidFilePath
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	data, err := readFile(name)
+	data, err := ReadYAMLFile(name)
 	if err != nil {
 		return err
 	}
-	return yaml.Unmarshal(data, model)
+	return ParseYAMLConfig(data, model)
 }
 
 func (*defYamlReader) Dump(v interface{}) ([]byte, error) {
 	return yaml.Marshal(v)
+}
+
+// ReadYAMLFile 读取yaml文件的配置信息
+func ReadYAMLFile(name string) ([]byte, error) {
+	return readFile(name)
+}
+
+// ParseYAMLConfig 解析yaml的配置信息
+func ParseYAMLConfig(data []byte, model interface{}) error {
+	return yaml.Unmarshal(data, model)
 }

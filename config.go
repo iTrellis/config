@@ -9,6 +9,24 @@ import (
 	"time"
 )
 
+// Option 处理函数
+type Option func(*AdapterConfig)
+
+// OptionFile 解析配置文件Option函数
+func OptionFile(name string) Option {
+	return func(c *AdapterConfig) {
+		c.ConfigFile = name
+	}
+}
+
+// OptionString 字符串解析配置Option函数
+func OptionString(rt ReaderType, name string) Option {
+	return func(c *AdapterConfig) {
+		c.readerType = rt
+		c.ConfigString = name
+	}
+}
+
 // Config manager data functions
 type Config interface {
 	// get a object
@@ -47,27 +65,22 @@ type Config interface {
 	Dump() (bs []byte, err error)
 	// get all keys
 	GetKeys() []string
+	// deep copy configs
 	Copy() Config
 }
 
 // NewConfig return Config by file's path, judge path's suffix, supported .json, .yml, .yaml
 func NewConfig(name string) (Config, error) {
-	switch fileToReaderType(name) {
-	case ReaderTypeJSON:
-		return NewJSONConfig(name)
-	case ReaderTypeYAML:
-		return NewYamlConfig(name)
+	return NewConfigOptions(OptionFile(name))
+}
+
+// NewConfigOptions 从操作函数解析Config
+func NewConfigOptions(opts ...Option) (Config, error) {
+	c := &AdapterConfig{}
+	err := c.init(opts...)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, ErrUnknownSuffixes
-}
-
-// NewYamlConfig get yaml config reader
-func NewYamlConfig(name string) (Config, error) {
-	return newAdapterConfig(ReaderTypeYAML, name)
-}
-
-// NewJSONConfig get json config reader
-func NewJSONConfig(name string) (Config, error) {
-	return newAdapterConfig(ReaderTypeJSON, name)
+	return c, nil
 }

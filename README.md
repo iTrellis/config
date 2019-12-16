@@ -22,8 +22,8 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 * A: ${X.Y.Z} for finding out X.Y.Z's value and setting into A. [See copy example](example/json.go#L23):[See config](example/example.json#L9)
 
 ```go
-c, e := NewConfig(name)
-c.GetString("a.b.c")
+	c, e := NewConfig(name)
+	c.GetString("a.b.c")
 ```
 
 ### Feature
@@ -67,6 +67,7 @@ type Config interface {
 	Dump() (bs []byte, err error)
 	// get all keys
 	GetKeys() []string
+	// deep copy configs
 	Copy() Config
 }
 ```
@@ -95,24 +96,24 @@ type Reader interface {
 ```
 
 ```go
-r := New(ReaderType)
-if err := r.Read(filename, model); err != nil {
-	return
-}
+	r := NewReader(ReaderType)
+	if err := r.Read(filename, model); err != nil {
+		return
+	}
 ```
 
 ### Readers
 
 ```go
-jReader := NewJSONReader()
-xReader := NewXMLReader()
-yReader := NewYAMLReader()
+	jReader := NewJSONReader()
+	xReader := NewXMLReader()
+	yReader := NewYAMLReader()
 ```
 
 * if you want to judge reader by file's suffix
 
 ```go
-sReader := NewSuffixReader()
+	sReader := NewSuffixReader()
 ```
 
 * .json = NewJSONReader()
