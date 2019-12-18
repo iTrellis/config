@@ -1,5 +1,4 @@
 // GNU GPL v3 License
-
 // Copyright (c) 2017 github.com:go-trellis
 
 package config
@@ -83,7 +82,7 @@ func (p *AdapterConfig) init(opts ...Option) (err error) {
 		return ErrValueNil
 	}
 
-	p.copyDollarSymbol()
+	err = p.copyDollarSymbol()
 
 	return
 }
@@ -404,16 +403,16 @@ func (p *AdapterConfig) Copy() Config {
 	return p.copy()
 }
 
-func (p *AdapterConfig) copyDollarSymbol() {
+func (p *AdapterConfig) copyDollarSymbol() error {
 	p.locker.RLock()
 	defer p.locker.RUnlock()
 
 	switch p.readerType {
 	case ReaderTypeJSON:
-		copyJSONDollarSymbol(&p.configs, "", &p.configs)
+		return copyJSONDollarSymbol(&p.configs, "", &p.configs)
 	case ReaderTypeYAML:
-		copyYAMLDollarSymbol(&p.configs)
+		return copyYAMLDollarSymbol(&p.configs)
 	}
 
-	return
+	return nil
 }

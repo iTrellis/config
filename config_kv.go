@@ -1,5 +1,4 @@
 // GNU GPL v3 License
-
 // Copyright (c) 2017 github.com:go-trellis
 
 package config
@@ -11,7 +10,7 @@ import (
 	"github.com/go-trellis/formats"
 )
 
-func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) {
+func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) error {
 	tokens := []string{}
 	if key != "" {
 		tokens = append(tokens, key)
@@ -25,7 +24,10 @@ func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map
 				if !ok {
 					continue
 				}
-				copyJSONDollarSymbol(configs, strings.Join(keys, "."), &vm)
+				err := copyJSONDollarSymbol(configs, strings.Join(keys, "."), &vm)
+				if err != nil {
+					return err
+				}
 			}
 		case reflect.String:
 			{
@@ -39,16 +41,19 @@ func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map
 				}
 				vm, e := getStringKeyValue(*configs, s[2:len(s)-1])
 				if e != nil {
-					continue
+					return e
 				}
-				setStringKeyValue(configs, strings.Join(keys, "."), vm)
+				err := setStringKeyValue(configs, strings.Join(keys, "."), vm)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
-	return
+	return nil
 }
 
-func copyYAMLDollarSymbol(configs *map[string]interface{}) {
+func copyYAMLDollarSymbol(configs *map[string]interface{}) error {
 
 	for k, v := range *configs {
 		switch reflect.TypeOf(v).Kind() {
@@ -58,7 +63,9 @@ func copyYAMLDollarSymbol(configs *map[string]interface{}) {
 				if !ok {
 					continue
 				}
-				copyMap(configs, k, &vm)
+				if err := copyMap(configs, k, &vm); err != nil {
+					return err
+				}
 			}
 		case reflect.String:
 			{
@@ -71,16 +78,19 @@ func copyYAMLDollarSymbol(configs *map[string]interface{}) {
 				}
 				vm, e := getInterfaceKeyValue(*configs, s[2:len(s)-1])
 				if e != nil {
-					continue
+					return e
 				}
-				setInterfaceKeyValue(configs, k, vm)
+				err := setInterfaceKeyValue(configs, k, vm)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
-	return
+	return nil
 }
 
-func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]interface{}) {
+func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]interface{}) error {
 	tokens := []string{}
 	if key != "" {
 		tokens = append(tokens, key)
@@ -95,8 +105,14 @@ func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]
 				if !ok {
 					continue
 				}
-				copyMap(configs, strings.Join(keys, "."), &vm)
-				setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+				err := copyMap(configs, strings.Join(keys, "."), &vm)
+				if err != nil {
+					return err
+				}
+				err = setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+				if err != nil {
+					return err
+				}
 			}
 		case reflect.String:
 			{
@@ -111,10 +127,14 @@ func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]
 				if e != nil {
 					continue
 				}
-				setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+				err := setInterfaceKeyValue(configs, strings.Join(keys, "."), vm)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
+	return nil
 }
 
 func getInterfaceKeyValue(configs map[string]interface{}, key string) (vm interface{}, err error) {

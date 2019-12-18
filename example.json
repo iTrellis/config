@@ -1,5 +1,4 @@
 // GNU GPL v3 License
-
 // Copyright (c) 2017 github.com:go-trellis
 
 {
@@ -16,7 +15,7 @@
     },
   /**  Test 4 
     "x": "http://www.example.com"
-  */ //haha
+  */
     "d": [
       3,
       4

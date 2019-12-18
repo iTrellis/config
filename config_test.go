@@ -1,3 +1,6 @@
+// GNU GPL v3 License
+// Copyright (c) 2017 github.com:go-trellis
+
 package config_test
 
 import (
@@ -37,10 +40,12 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetString("a"), ShouldEqual, "Easy!")
 				So(c.GetMap("a"), ShouldBeNil)
 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "test")
-				c.SetKeyValue("b.c.cn.a", "value")
+				err = c.SetKeyValue("b.c.cn.a", "value")
+				So(err, ShouldBeNil)
 
 				newC := c.Copy()
-				newC.SetKeyValue("b.c.cn.a", "joking")
+				err = newC.SetKeyValue("b.c.cn.a", "joking")
+				So(err, ShouldBeNil)
 				So(newC.GetInterface("b.c.cn.a"), ShouldEqual, "joking")
 
 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "value")
@@ -62,11 +67,16 @@ func TestNewConfig(t *testing.T) {
 				So(faceList[1], ShouldEqual, "4")
 				So(c.GetTimeDuration("b.c.t"), ShouldEqual, time.Hour*24)
 
-				c.SetKeyValue("a.b.c", "Correct")
-				c.SetKeyValue("b.c.e", "Correct")
-				c.SetKeyValue("b.c.d", "d")
-				c.SetKeyValue("b.c.g", false)
-				c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+				err = c.SetKeyValue("a.b.c", "Correct")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.e", "Correct")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.d", "d")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.g", false)
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+				So(err, ShouldBeNil)
 
 				So(c.GetString("a", "example"), ShouldEqual, "example")
 				So(c.GetInterface("a", "example"), ShouldNotBeNil)
@@ -75,10 +85,14 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetBoolean("b.c.g", true), ShouldBeFalse)
 				So(c.GetString("b.c.d", "example"), ShouldEqual, "d")
 
-				c.SetKeyValue("a", "Difficult!")
-				c.SetKeyValue("h.a", []bool{false, true, false})
-				c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
-				c.SetKeyValue("h.b", "10T")
+				err = c.SetKeyValue("a", "Difficult!")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.a", []bool{false, true, false})
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.b", "10T")
+				So(err, ShouldBeNil)
 
 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
 				So(c.GetString("a", "example"), ShouldEqual, "Difficult!")
@@ -94,7 +108,8 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetStringList("b.d"), ShouldBeNil)
 				So(c.GetIntList("b.d"), ShouldNotBeNil)
 
-				c.SetKeyValue("b.d", []string{"1", "2", "3"})
+				err = c.SetKeyValue("b.d", []string{"1", "2", "3"})
+				So(err, ShouldBeNil)
 
 				stringList := c.GetStringList("b.d")
 				So(stringList[0], ShouldEqual, "1")
@@ -116,10 +131,12 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetString("a"), ShouldEqual, "Easy!")
 				So(c.GetMap("a"), ShouldBeNil)
 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "test")
-				c.SetKeyValue("b.c.cn.a", "value")
+				err = c.SetKeyValue("b.c.cn.a", "value")
+				So(err, ShouldBeNil)
 
 				newC := c.Copy()
-				newC.SetKeyValue("b.c.cn.a", "joking")
+				err = newC.SetKeyValue("b.c.cn.a", "joking")
+				So(err, ShouldBeNil)
 				So(newC.GetInterface("b.c.cn.a"), ShouldEqual, "joking")
 
 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "value")
@@ -141,11 +158,16 @@ func TestNewConfig(t *testing.T) {
 				So(faceList[1], ShouldEqual, 4)
 				So(c.GetTimeDuration("b.c.t"), ShouldEqual, time.Hour*24)
 
-				c.SetKeyValue("a.b.c", "Correct")
-				c.SetKeyValue("b.c.e", "Correct")
-				c.SetKeyValue("b.c.d", "d")
-				c.SetKeyValue("b.c.g", false)
-				c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+				err = c.SetKeyValue("a.b.c", "Correct")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.e", "Correct")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.d", "d")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.c.g", false)
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+				So(err, ShouldBeNil)
 
 				So(c.GetString("a", "example"), ShouldEqual, "example")
 				So(c.GetInterface("a", "example"), ShouldNotBeNil)
@@ -154,10 +176,14 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetBoolean("b.c.g", true), ShouldBeFalse)
 				So(c.GetString("b.c.d", "example"), ShouldEqual, "d")
 
-				c.SetKeyValue("a", "Difficult!")
-				c.SetKeyValue("h.a", []bool{false, true, false})
-				c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
-				c.SetKeyValue("h.b", "10T")
+				err = c.SetKeyValue("a", "Difficult!")
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.a", []bool{false, true, false})
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
+				So(err, ShouldBeNil)
+				err = c.SetKeyValue("h.b", "10T")
+				So(err, ShouldBeNil)
 
 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
 				So(c.GetString("a", "example"), ShouldEqual, "Difficult!")
@@ -173,7 +199,8 @@ func TestNewConfig(t *testing.T) {
 				So(c.GetStringList("b.d"), ShouldBeNil)
 				So(c.GetIntList("b.d"), ShouldNotBeNil)
 
-				c.SetKeyValue("b.d", []string{"1", "2", "3"})
+				err = c.SetKeyValue("b.d", []string{"1", "2", "3"})
+				So(err, ShouldBeNil)
 
 				stringList := c.GetStringList("b.d")
 				So(stringList[0], ShouldEqual, "1")
