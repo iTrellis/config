@@ -18,14 +18,15 @@ import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
 
 > not supported "*.xml": now go encoding/xml is not supported map[string]interface{}
 
-* dot separator to get values, and if return nil, you should set default
+* dot separator to get values, and if return nil, you should set default value
+* A: ${X.Y.Z} for finding out X.Y.Z's value and setting into A. [See copy example](config_test.go#L20):[See config](example.json#14)
 * You can do like this: c.GetString("a.b.c") Or c.GetString("a.b.c", "default")
-* Supported: .json, .yaml, .yml
-* A: ${X.Y.Z} for finding out X.Y.Z's value and setting into A. [See copy example](example/json.go#L23):[See config](example/example.json#L9)
+* You can write notes into the json file.
+* Supported: .json, .yaml
 
 ```go
-	c, e := NewConfig(name)
-	c.GetString("a.b.c")
+c, e := NewConfig(name)
+c.GetString("a.b.c")
 ```
 
 ### Feature
@@ -76,14 +77,10 @@ type Config interface {
 
 ### More Example
 
-[See More Example](example)
+[See More Example]
 
-```bash
-go run example/json.go
-
-go run example/yml.go
-```
-
+* [JSON](example.json)
+* [YAML](example.yml)
 
 ### Reader Repo
 
@@ -98,33 +95,27 @@ type Reader interface {
 ```
 
 ```go
-	r := NewReader(ReaderType)
-	if err := r.Read(filename, model); err != nil {
-		return
-	}
+r := NewReader(ReaderType)
+if err := r.Read(filename, model); err != nil {
+	return
+}
 ```
 
 ### Readers
 
 
 ```go
-	jReader := NewJSONReader()
-	xReader := NewXMLReader()
-	yReader := NewYAMLReader()
+jReader := NewJSONReader()
+xReader := NewXMLReader()
+yReader := NewYAMLReader()
 ```
 
 * if you want to judge reader by file's suffix
 
 ```go
-	sReader := NewSuffixReader()
+sReader := NewSuffixReader()
 ```
 
 * .json = NewJSONReader()
 * .xml = NewXMLReader()
 * .yaml | .yml = NewYAMLReader()
-
-### TODO
-
-* Add Test
-
-
