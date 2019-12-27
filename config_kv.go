@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/go-trellis/formats"
+	"github.com/go-trellis/common/formats"
 )
 
 func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map[string]interface{}) error {

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/go-trellis/formats"
+	"github.com/go-trellis/common/formats"
 )
 
 func (p *getter) GetMapKeyValueList(ms interface{}, key string) ([]interface{}, error) {

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-trellis/formats"
+	"github.com/go-trellis/common/formats"
 )
 
 // MapValueGetter get a value from map
