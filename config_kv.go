@@ -16,6 +16,9 @@ func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map
 		tokens = append(tokens, key)
 	}
 	for k, v := range *maps {
+		if v == nil {
+			return nil
+		}
 		keys := append(tokens, k)
 		switch reflect.TypeOf(v).Kind() {
 		case reflect.Map:
@@ -56,6 +59,9 @@ func copyJSONDollarSymbol(configs *map[string]interface{}, key string, maps *map
 func copyYAMLDollarSymbol(configs *map[string]interface{}) error {
 
 	for k, v := range *configs {
+		if v == nil {
+			return nil
+		}
 		switch reflect.TypeOf(v).Kind() {
 		case reflect.Map:
 			{
@@ -97,6 +103,9 @@ func copyMap(configs *map[string]interface{}, key string, maps *map[interface{}]
 	}
 
 	for k, v := range *maps {
+		if v == nil {
+			return nil
+		}
 		keys := append(tokens, k.(string))
 		switch reflect.TypeOf(v).Kind() {
 		case reflect.Map:

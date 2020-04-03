@@ -65,6 +65,9 @@ func (p *AdapterConfig) init(opts ...Option) (err error) {
 
 		err = p.reader.Read(p.ConfigFile, &p.configs)
 	}
+	if err != nil {
+		return ErrValueNil
+	}
 
 	if len(p.ConfigString) > 0 {
 		switch p.readerType {
