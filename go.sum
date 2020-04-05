@@ -1,7 +1,7 @@
 github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0/go.mod h1:4Zcjuz89kmFXt9morQgcfYZAYZ5n8WHjt81YYWIwtTM=
 github.com/dimiro1/banner v1.0.0/go.mod h1:B1JJ2lANkn1MHpV/PvaGV0UcZ7rHoj2dkYTkWI1kCOs=
-github.com/go-trellis/common v1.3.1 h1:V9Ur/oex9YYPi5S4B05TEm6jKUcC2TkUA+87sWALnw0=
-github.com/go-trellis/common v1.3.1/go.mod h1:F8/nbQi4+N0F6H9fxPy1TJNGVFbCBF28RnK5otMIiac=
+github.com/go-trellis/common v1.4.0 h1:WBreSAIWxL/kmWPGD1n8udgMD6wRhljPaSlpHaH3p/k=
+github.com/go-trellis/common v1.4.0/go.mod h1:F8/nbQi4+N0F6H9fxPy1TJNGVFbCBF28RnK5otMIiac=
 github.com/go-trellis/files v0.0.0-20170309073846-c9ce6f0c11b5/go.mod h1:OD4pGROqjWafGfqt393eK3zSCiLOUDfb+0tHiiy4LcA=
 github.com/google/uuid v1.1.1/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/mattn/go-colorable v0.1.4/go.mod h1:U0ppj6V5qS13XJ6of8GYAs25YV2eR4EVcfRqFIhoBtE=
