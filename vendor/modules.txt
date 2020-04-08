@@ -1,4 +1,4 @@
-# github.com/go-trellis/common v1.4.1
+# github.com/go-trellis/common v1.5.0
 github.com/go-trellis/common/formats
 # golang.org/x/text v0.3.2
 golang.org/x/text/encoding
