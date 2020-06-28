@@ -81,7 +81,7 @@ func (p *fileGem) read(name string, bufLen int) (b []byte, n int, err error) {
 			return
 		}
 		n += m
-		b = append(b, buf...)
+		b = append(b, buf[:m]...)
 		if m < bufLen {
 			break
 		}
