@@ -32,7 +32,7 @@ type MapValueGetter interface {
 }
 
 // DefaultGetter default options getter
-var defaultGetter = MapGetter(ReaderTypeYAML)
+var DefaultGetter = MapGetter(ReaderTypeYAML)
 
 // MapGetter get map value getter
 func MapGetter(rt ReaderType) MapValueGetter {
