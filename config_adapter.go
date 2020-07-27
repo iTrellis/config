@@ -360,7 +360,7 @@ func (p *AdapterConfig) GetValuesConfig(key string) Config {
 		return nil
 	}
 
-	return MapGetter().GenMapConfig(p.readerType, opt)
+	return MapGetter(p.readerType).GenMapConfig(opt)
 }
 
 func (p *AdapterConfig) getKeyValue(key string) (vm interface{}, err error) {
