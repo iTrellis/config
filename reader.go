@@ -49,14 +49,14 @@ func ReaderOptionFilename(filename string) ReaderOptionFunc {
 }
 
 // NewReader return a reader by ReaderType
-func NewReader(rt ReaderType) (Reader, error) {
+func NewReader(rt ReaderType, filename string) (Reader, error) {
 	switch rt {
 	case ReaderTypeJSON:
-		return NewJSONReader(), nil
+		return NewJSONReader(ReaderOptionFilename(filename)), nil
 	case ReaderTypeXML:
-		return NewXMLReader(), nil
+		return NewXMLReader(ReaderOptionFilename(filename)), nil
 	case ReaderTypeYAML:
-		return NewYAMLReader(), nil
+		return NewYAMLReader(ReaderOptionFilename(filename)), nil
 	default:
 		return nil, ErrNotSupportedReaderType
 	}
