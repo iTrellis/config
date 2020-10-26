@@ -6,9 +6,9 @@ package config
 // Options initial params
 type Options map[string]interface{}
 
-// ToConfig Options to config, default JSON reader
+// ToConfig Options to config, default YAML reader
 func (p *Options) ToConfig(rts ...ReaderType) Config {
-	rt := ReaderTypeJSON
+	rt := ReaderTypeYAML
 	if len(rts) > 0 {
 		rt = rts[0]
 	}
