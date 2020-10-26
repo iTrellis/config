@@ -113,7 +113,7 @@ yReader := NewYAMLReader()
 * if you want to judge reader by file's suffix
 
 ```go
-sReader := NewSuffixReader()
+sReader := NewSuffixReader(filepath)
 ```
 
 * .json = NewJSONReader()
