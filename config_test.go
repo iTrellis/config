@@ -4,7 +4,7 @@ package config_test
 // 	"testing"
 // 	"time"
 
-// 	"github.com/go-trellis/config"
+// 	"github.com/iTrellis/go-config"
 // 	. "github.com/smartystreets/goconvey/convey"
 // )
 

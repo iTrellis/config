@@ -1,5 +1,5 @@
 // GNU GPL v3 License
-// Copyright (c) 2017 github.com:go-trellis
+// Copyright (c) 2017 github.com:iTrellis
 
 package config
 
@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-trellis/common/formats"
+	"github.com/iTrellis/go-common/formats"
 	"gopkg.in/yaml.v2"
 )
 
