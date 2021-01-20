@@ -4,7 +4,7 @@
 package config
 
 import (
-	"github.com/iTrellis/go-common/files"
+	"github.com/iTrellis/common/files"
 )
 
 // ReaderType define reader type
