@@ -1,4 +1,4 @@
-module github.com/iTrellis/go-config
+module github.com/iTrellis/config
 
 go 1.13
 
