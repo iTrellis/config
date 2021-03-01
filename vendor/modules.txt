@@ -1,4 +1,4 @@
-# github.com/iTrellis/common v0.21.3
+# github.com/iTrellis/common v0.21.4
 github.com/iTrellis/common/files
 github.com/iTrellis/common/formats
 # golang.org/x/text v0.3.5

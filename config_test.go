@@ -139,7 +139,7 @@ package config_test
 // 				So(newC.GetInterface("b.c.cn.a"), ShouldEqual, "joking")
 
 // 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "value")
-// 				So(c.GetInterface("n.a"), ShouldEqual, "value")
+// 				So(c.GetInterface("n_v.a"), ShouldEqual, "value")
 
 // 				intList := c.GetIntList("b.c.cbd")
 // 				So(intList[0], ShouldEqual, 3)
