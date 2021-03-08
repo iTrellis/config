@@ -73,7 +73,7 @@ type Config interface {
 	// get time duration by (int)(uint), exp: 1s, 1day
 	GetTimeDuration(key string, defValue ...time.Duration) time.Duration
 	// get byte size by (int)(uint), exp: 1k, 1m
-	GetByteSize(key string) *big.Int
+	GetByteSize(key string, defValue ...*big.Int) *big.Int
 	// get map value
 	GetMap(key string) Options
 	// get key's config

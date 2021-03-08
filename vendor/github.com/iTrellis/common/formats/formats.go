@@ -79,10 +79,13 @@ var (
 )
 
 // ParseStringByteSize return big size
-func ParseStringByteSize(key string) *big.Int {
+func ParseStringByteSize(key string, defValue ...*big.Int) *big.Int {
 	groups, matched := FindStringSubmatchMap(key, bitReg)
 	if !matched {
-		return nil
+		if len(defValue) == 0 {
+			return nil
+		}
+		return defValue[0]
 	}
 	i, _ := ToInt64(groups["value"])
 
@@ -122,7 +125,10 @@ func ParseStringByteSize(key string) *big.Int {
 	case "y", "yi", "yib", "yobibyte", "yobibytes":
 		return (&big.Int{}).Mul(big.NewInt(i), _YiByte)
 	default:
-		return nil
+		if len(defValue) == 0 {
+			return nil
+		}
+		return defValue[0]
 	}
 }
 
@@ -155,6 +161,9 @@ func ParseStringTime(s string, defValue ...time.Duration) time.Duration {
 	case "days", "day", "d":
 		return time.Hour * 24 * time.Duration(i)
 	default:
-		return 0
+		if len(defValue) == 0 {
+			return 0
+		}
+		return defValue[0]
 	}
 }

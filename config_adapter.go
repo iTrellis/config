@@ -140,12 +140,12 @@ func (p *AdapterConfig) copy() *AdapterConfig {
 
 // GetTimeDuration return time in p.configs by key
 func (p *AdapterConfig) GetTimeDuration(key string, defValue ...time.Duration) time.Duration {
-	return formats.ParseStringTime(strings.ToLower(p.GetString(key)))
+	return formats.ParseStringTime(strings.ToLower(p.GetString(key)), defValue...)
 }
 
 // GetByteSize return time in p.configs by key
-func (p *AdapterConfig) GetByteSize(key string) *big.Int {
-	return formats.ParseStringByteSize(strings.ToLower(p.GetString(key)))
+func (p *AdapterConfig) GetByteSize(key string, defValue ...*big.Int) *big.Int {
+	return formats.ParseStringByteSize(strings.ToLower(p.GetString(key)), defValue...)
 }
 
 // GetInterface return a interface object in p.configs by key
