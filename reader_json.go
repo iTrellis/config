@@ -19,7 +19,8 @@ package config
 
 import (
 	"bytes"
-	"encoding/json"
+
+	"github.com/iTrellis/common/json"
 )
 
 type defJSONReader struct {

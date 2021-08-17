@@ -18,7 +18,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package config
 
 import (
-	"encoding/json"
 	"math/big"
 	"reflect"
 	"strings"
@@ -26,6 +25,7 @@ import (
 	"time"
 
 	"github.com/iTrellis/common/formats"
+	"github.com/iTrellis/common/json"
 	"gopkg.in/yaml.v3"
 )
 
