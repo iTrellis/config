@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	timeReg = `^(?P<value>([0-9]+(\.[0-9]+)?))\s*(?P<unit>(nanoseconds|nanosecond|nanos|nano|ns|microseconds|microsecond|micros|micro|us|milliseconds|millisecond|millis|milli|ms|seconds|second|s|minutes|minute|m|hours|hour|h|days|day|d))$`
+	timeReg = `^(?P<value>([0-9]+(\.[0-9]+)?))\s*(?P<unit>(nanoseconds|nanosecond|nanos|nano|ns|microseconds|microsecond|micros|micro|us|milliseconds|millisecond|millis|milli|ms|seconds|second|s|minutes|minute|m|hours|hour|h|days|day|d|weeks|week|w|years|year|y))$`
 
 	bitReg = `^(?P<value>([0-9]+(\.[0-9]+)?))\s*(?P<unit>(b|byte|bytes|kb|kilobyte|kilobytes|mb|megabyte|megabytes|gb|gigabyte|gigabytes|tb|terabyte|terabytes|pb|petabyte|petabytes|eb|exabyte|exabytes|zb|zettabyte|zettabytes|yb|yottabyte|yottabytes|k|ki|kib|kibibyte|kibibytes|m|mi|mib|mebibyte|mebibytes|g|gi|gib|gibibyte|gibibytes|t|ti|tib|tebibyte|tebibytes|p|pi|pib|pebibyte|pebibytes|e|ei|eib|exbibyte|exbibytes|z|zi|zib|zebibyte|zebibytes|y|yi|yib|yobibyte|yobibytes))$`
 )
@@ -160,6 +160,10 @@ func ParseStringTime(s string, defValue ...time.Duration) time.Duration {
 		return time.Hour * time.Duration(i)
 	case "days", "day", "d":
 		return time.Hour * 24 * time.Duration(i)
+	case "weeks", "week", "w":
+		return time.Hour * 24 * 7 * time.Duration(i)
+	case "years", "year", "y":
+		return time.Hour * 24 * 365 * time.Duration(i)
 	default:
 		if len(defValue) == 0 {
 			return 0

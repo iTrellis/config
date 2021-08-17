@@ -21,6 +21,9 @@ import (
 	"io"
 	"os"
 	"sync"
+	"sync/atomic"
+
+	"github.com/iTrellis/common/errors"
 )
 
 // FileMode
@@ -29,65 +32,113 @@ const (
 	FileModeReadWrite os.FileMode = 0666
 )
 
-var defaultFile *fileGem
+var (
+	once        sync.Once
+	defaultFile FileRepo
+)
 
 type fileGem struct {
-	sync.Mutex
+	sync.RWMutex
 
-	executingPath map[string]FileStatus
-	readBufLength int
+	executingPath map[string]*FileInfo
+	options       Options
 }
 
-type callbackExec func() error
+type FileInfo struct {
+	sync.Mutex
+	*os.File
+}
 
 // New return filerepo with default executor
-func New() FileRepo {
-	if defaultFile == nil {
-		defaultFile = &fileGem{
-			executingPath: make(map[string]FileStatus),
-			readBufLength: ReadBufferLength,
-		}
-	}
+func New(opts ...Option) FileRepo {
+	once.Do(func() {
+		defaultFile = new(opts...)
+	})
 	return defaultFile
 }
 
-func (p *fileGem) updateExecFileStatus(name string, status FileStatus) error {
-	p.Lock()
-	defer p.Unlock()
-	if p.FileOpened(name) && status != FileStatusClosed {
-		return ErrFileIsAlreadyOpen
-	}
-	if status == FileStatusClosed {
-		delete(p.executingPath, name)
-		return nil
-	}
-	p.executingPath[name] = status
-
-	return nil
+func NewFileInfo(opts ...Option) FileRepo {
+	return new(opts...)
 }
 
-func (p *fileGem) Read(name string) (b []byte, n int, err error) {
+func new(opts ...Option) FileRepo {
+	options := Options{}
+	for _, o := range opts {
+		o(&options)
+	}
+	if options.ReadBufferLength == 0 {
+		options.ReadBufferLength = DefaultReadBufferLength
+	}
+	return &fileGem{
+		executingPath: make(map[string]*FileInfo),
+		options:       options,
+	}
+}
 
-	f := func() error {
-		b, n, err = p.read(name, p.readBufLength)
+func (p *fileGem) Close(name string) error {
+	p.Lock()
+	defer p.Unlock()
+	return p.close(name)
+}
+
+func (p *fileGem) close(name string) error {
+	fi, ok := p.executingPath[name]
+	if !ok {
+		return nil
+	}
+	err := fi.Close()
+	if err != nil {
 		return err
 	}
 
-	err = p.execute(name, FileStatusOpening, f)
+	delete(p.executingPath, name)
+	return nil
+}
 
-	return
+func (p *fileGem) CloseAll() error {
+	p.Lock()
+	defer p.Unlock()
+	var errs errors.Errors
+	for k, fi := range p.executingPath {
+		if err := fi.Close(); err != nil {
+			errs = append(errs, err)
+		}
+		delete(p.executingPath, k)
+	}
+	return errs.Errors()
+}
+
+func (p *fileGem) Open(file string) (*FileInfo, error) {
+	p.Lock()
+	defer p.Unlock()
+	return p.tryOpen(file)
+}
+
+func (p *fileGem) OpenFile(file string, flag int, perm os.FileMode) (*FileInfo, error) {
+	p.Lock()
+	defer p.Unlock()
+	return p.tryOpenFile(file, flag, perm)
+}
+
+func (p *fileGem) Read(name string) (b []byte, n int, err error) {
+	return p.read(name, int(p.options.ReadBufferLength))
 }
 
 func (p *fileGem) read(name string, bufLen int) (b []byte, n int, err error) {
-
+	p.Lock()
 	fi, e := p.tryOpen(name)
 	if e != nil {
+		p.Unlock()
 		err = e
 		return
 	}
-	defer fi.Close()
-	for {
+	p.Unlock()
 
+	if !p.options.Concurrency {
+		fi.Lock()
+		defer fi.Unlock()
+	}
+	for {
 		buf := make([]byte, bufLen)
 		m, e := fi.Read(buf)
 		if e != nil && e != io.EOF {
@@ -105,77 +156,100 @@ func (p *fileGem) read(name string, bufLen int) (b []byte, n int, err error) {
 }
 
 func (p *fileGem) FileOpened(name string) bool {
-	return p.executingPath[name] != FileStatusClosed
+	return p.executingPath[name] != nil
 }
 
-func (p *fileGem) tryOpen(name string) (*os.File, error) {
-	return p.tryOpenfile(name, os.O_RDONLY, FileModeOnlyRead)
+func (p *fileGem) tryOpen(name string) (*FileInfo, error) {
+	return p.tryOpenFile(name, os.O_RDONLY, 0)
 }
 
-func (p *fileGem) tryOpenfile(name string, flag int, perm os.FileMode) (*os.File, error) {
-	return os.OpenFile(name, flag, perm)
+func (p *fileGem) tryOpenFile(name string, flag int, perm os.FileMode) (*FileInfo, error) {
+	fi, ok := p.executingPath[name]
+	if ok {
+		p.executingPath[name] = fi
+		return fi, nil
+	}
+
+	opened, err := os.OpenFile(name, flag, perm)
+	if err != nil {
+		return nil, err
+	}
+
+	fi = &FileInfo{
+		File: opened,
+	}
+	p.executingPath[name] = fi
+
+	return fi, nil
 }
 
-func (p *fileGem) Write(name, s string) (int, error) {
-	return p.WriteBytes(name, []byte(s))
+func (p *fileGem) Write(name, s string, opts ...WriteOption) (int, error) {
+	return p.WriteBytes(name, []byte(s), opts...)
 }
 
-func (p *fileGem) WriteBytes(name string, b []byte) (int, error) {
-	return p.write(name, b, os.O_TRUNC)
+func (p *fileGem) WriteBytes(name string, b []byte, opts ...WriteOption) (int, error) {
+	if len(opts) == 0 {
+		opts = append(opts, WriteFlag(os.O_WRONLY))
+	}
+	return p.write(name, b, append(opts, WriteFlag(os.O_TRUNC|os.O_CREATE))...)
 }
 
-func (p *fileGem) WriteAppend(name, s string) (int, error) {
-	return p.WriteAppendBytes(name, []byte(s))
+func (p *fileGem) WriteAppend(name, s string, opts ...WriteOption) (int, error) {
+	return p.WriteAppendBytes(name, []byte(s), opts...)
 }
 
-func (p *fileGem) WriteAppendBytes(name string, b []byte) (int, error) {
-	return p.write(name, b, os.O_APPEND)
+func (p *fileGem) WriteAppendBytes(name string, b []byte, opts ...WriteOption) (int, error) {
+	if len(opts) == 0 {
+		opts = append(opts, WriteFlag(os.O_WRONLY))
+	}
+	return p.write(name, b, append(opts, WriteFlag(os.O_APPEND|os.O_CREATE))...)
 }
 
 func (p *fileGem) Rename(oldpath, newpath string) error {
-
-	f := func() error {
-		return os.Rename(oldpath, newpath)
+	p.Lock()
+	if err := p.close(oldpath); err != nil {
+		p.Unlock()
+		return err
 	}
-
-	return p.execute(oldpath, FileStatusMoving, f)
+	p.Unlock()
+	return os.Rename(oldpath, newpath)
 }
 
-func (p *fileGem) SetReadBufLength(l int) error {
+func (p *fileGem) SetReadBufLength(l int64) error {
 	if l <= 0 {
 		return ErrReadBufferLengthBelowZero
 	}
 
-	p.readBufLength = l
+	atomic.StoreInt64(&p.options.ReadBufferLength, l)
 
 	return nil
 }
 
-func (p *fileGem) write(name string, b []byte, flag int) (n int, err error) {
+func (p *fileGem) write(name string, b []byte, opts ...WriteOption) (n int, err error) {
 
-	callback := func() error {
-		fi, e := p.tryOpenfile(name, os.O_CREATE|os.O_WRONLY|flag, FileModeReadWrite)
-		if e != nil {
-			return e
-		}
-		defer fi.Close()
-
-		n, e = fi.Write(b)
-		return e
+	options := &WriteOptions{}
+	for _, o := range opts {
+		o(options)
 	}
 
-	err = p.execute(name, FileStatusOpening, callback)
-
-	return
-}
-
-func (p *fileGem) execute(name string, fStatus FileStatus, callback callbackExec) (err error) {
-	if err = p.updateExecFileStatus(name, fStatus); err != nil {
-		return
+	flag := 0
+	if options.Flag != nil {
+		flag = flag | *options.Flag
 	}
-	defer func() { _ = p.updateExecFileStatus(name, FileStatusClosed) }()
 
-	return callback()
+	p.Lock()
+	fi, err := p.tryOpenFile(name, flag, FileModeReadWrite)
+	if err != nil {
+		p.Unlock()
+		return 0, err
+	}
+	p.Unlock()
+
+	if !p.options.Concurrency {
+		fi.Lock()
+		defer fi.Unlock()
+	}
+	return fi.Write(b)
 }
 
 func (p *fileGem) FileInfo(name string) (os.FileInfo, error) {

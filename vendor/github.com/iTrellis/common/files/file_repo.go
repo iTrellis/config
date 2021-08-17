@@ -17,42 +17,70 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 package files
 
-import "os"
+import (
+	"os"
+)
 
 // FileRepo execute file functions
 type FileRepo interface {
+	Open(file string) (*FileInfo, error)
+	OpenFile(file string, flag int, perm os.FileMode) (*FileInfo, error)
 	// judge if file is opening
 	FileOpened(string) bool
+	// get information with file name
+	FileInfo(name string) (os.FileInfo, error)
+	// close the file
+	Close(file string) error
+	// close all files which were opened
+	CloseAll() error
 	// read file
 	Read(string) (b []byte, n int, err error)
 	// rewrite file with context
-	Write(name, context string) (int, error)
-	WriteBytes(name string, b []byte) (int, error)
+	Write(name, context string, opts ...WriteOption) (int, error)
+	WriteBytes(name string, b []byte, opts ...WriteOption) (int, error)
 	// append context to the file
-	WriteAppend(name, context string) (int, error)
-	WriteAppendBytes(name string, b []byte) (int, error)
+	WriteAppend(name, context string, opts ...WriteOption) (int, error)
+	WriteAppendBytes(name string, b []byte, opts ...WriteOption) (int, error)
 	// rename file
 	Rename(oldpath, newpath string) error
 	// set length of buffer to read file, default: 1024
-	SetReadBufLength(int) error
-	// get information with file name
-	FileInfo(name string) (os.FileInfo, error)
+	SetReadBufLength(int64) error
 }
 
-// FileStatus defile file status
-type FileStatus int
+type Option func(*Options)
+type Options struct {
+	ReadBufferLength int64
+	Concurrency      bool
+}
 
-// file status
-const (
-	// nothing
-	FileStatusClosed FileStatus = iota
-	// file is opened
-	FileStatusOpening
-	// file is moving or rename
-	FileStatusMoving
-)
+func ReadBufferLength(rbuf int64) Option {
+	return func(o *Options) {
+		o.ReadBufferLength = rbuf
+	}
+}
 
-// ReadBufferLength default reader buffer length
+func Concurrency() Option {
+	return func(o *Options) {
+		o.Concurrency = true
+	}
+}
+
+type WriteOption func(*WriteOptions)
+type WriteOptions struct {
+	Flag *int
+}
+
+func WriteFlag(flag int) WriteOption {
+	return func(o *WriteOptions) {
+		if o.Flag == nil {
+			o.Flag = &flag
+		} else {
+			*o.Flag = *o.Flag | flag
+		}
+	}
+}
+
+// DefaultReadBufferLength default reader buffer length
 const (
-	ReadBufferLength = 1024
+	DefaultReadBufferLength = 1024
 )

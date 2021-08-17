@@ -17,189 +17,124 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 package config_test
 
-// import (
-// 	"testing"
-// 	"time"
+import (
+	"encoding/json"
+	"testing"
+	"time"
 
-// 	"github.com/iTrellis/config"
-// 	. "github.com/smartystreets/goconvey/convey"
-// )
+	"github.com/iTrellis/common/testutils"
+	"github.com/iTrellis/config"
+)
 
-// const (
-// 	jsonFile  = "example.json"
-// 	yamlFile  = "example.yml"
-// 	wrongFile = "wrong_file"
-// )
+const (
+	jsonFile  = "example.json"
+	yamlFile  = "example.yml"
+	wrongFile = "wrong_file"
+)
 
-// func TestNewConfig(t *testing.T) {
-// 	Convey("get config", t, func() {
-// 		Convey("failed get config", func() {
-// 			c, err := config.NewConfig(wrongFile)
-// 			So(err, ShouldBeError)
-// 			So(c, ShouldBeNil)
-// 			c, err = config.NewConfig("")
-// 			So(err, ShouldBeError)
-// 			So(c, ShouldBeNil)
+func TestNewJSONConfig(t *testing.T) {
+	c, err := config.NewConfig(wrongFile)
+	testutils.NotOk(t, err)
+	testutils.Equals(t, c, nil)
+	c, err = config.NewConfig("")
+	testutils.NotOk(t, err)
+	testutils.Equals(t, c, nil)
 
-// 			err = config.ReadJSONFile(wrongFile, nil)
-// 			So(err, ShouldBeError)
-// 		})
+	err = config.ReadJSONFile(wrongFile, nil)
+	testutils.NotOk(t, err)
 
-// 		Convey("json config", func() {
-// 			c, err := config.NewConfig(jsonFile)
-// 			So(err, ShouldBeNil)
-// 			So(c, ShouldNotBeNil)
+	c, err = config.NewConfig(jsonFile)
+	testutils.Ok(t, err)
+	testutils.Assert(t, c != nil, "config get nil")
 
-// 			Convey("json checker", func() {
-// 				So(c.GetString("a"), ShouldEqual, "Easy!")
-// 				So(c.GetMap("a"), ShouldBeNil)
-// 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "test")
-// 				c.SetKeyValue("b.c.cn.a", "value")
+	faceList := c.GetList("b.d")
 
-// 				newC := c.Copy()
-// 				newC.SetKeyValue("b.c.cn.a", "joking")
-// 				So(newC.GetInterface("b.c.cn.a"), ShouldEqual, "joking")
+	testutils.Assert(t, faceList[0] == json.Number("3"), "b.d[0] should be json.Number `3`")
+	testutils.Assert(t, faceList[1] == json.Number("4"), "b.d[1] should be json.Number `4`")
+	testFunc(t, c)
 
-// 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "value")
-// 				So(c.GetInterface("n.a"), ShouldEqual, "value")
+}
 
-// 				intList := c.GetIntList("b.c.cbd")
-// 				So(intList[0], ShouldEqual, 3)
-// 				So(intList[1], ShouldEqual, 4)
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
-// 				So(c.GetString("b.c.e"), ShouldEqual, "Just Do it")
-// 				So(c.GetFloat("h"), ShouldEqual, 1.01)
-// 				So(c.GetInt("b.c.f", 100), ShouldEqual, 2)
-// 				So(c.GetInt("b.c.e"), ShouldEqual, 0)
-// 				So(c.GetBoolean("b.c.g"), ShouldBeTrue)
-// 				So(c.GetBoolean("b.c.x", true), ShouldBeTrue)
-// 				So(c.GetConfig("b"), ShouldNotBeNil)
-// 				faceList := c.GetList("b.d")
-// 				So(faceList[0], ShouldEqual, "3")
-// 				So(faceList[1], ShouldEqual, "4")
-// 				So(c.GetTimeDuration("b.c.t"), ShouldEqual, time.Hour*24)
+func TestNewYAMLConfig(t *testing.T) {
 
-// 				c.SetKeyValue("a.b.c", "Correct")
-// 				c.SetKeyValue("b.c.e", "Correct")
-// 				c.SetKeyValue("b.c.d", "d")
-// 				c.SetKeyValue("b.c.g", false)
-// 				c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+	c, err := config.NewConfig(yamlFile)
+	testutils.Ok(t, err)
+	testutils.Assert(t, c != nil, "loaded config should not be nil")
+	faceList := c.GetList("b.d")
 
-// 				So(c.GetString("a", "example"), ShouldEqual, "example")
-// 				So(c.GetInterface("a", "example"), ShouldNotBeNil)
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "Correct")
-// 				So(c.GetString("b.c.e", "example"), ShouldEqual, "Correct")
-// 				So(c.GetBoolean("b.c.g", true), ShouldBeFalse)
-// 				So(c.GetString("b.c.d", "example"), ShouldEqual, "d")
+	testutils.Assert(t, faceList[0] == 3, "b.d[0] should be `3`")
+	testutils.Assert(t, faceList[1] == 4, "b.d[1] should be `4`")
 
-// 				c.SetKeyValue("a", "Difficult!")
-// 				c.SetKeyValue("h.a", []bool{false, true, false})
-// 				c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
-// 				c.SetKeyValue("h.b", "10T")
+	testFunc(t, c)
+}
 
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
-// 				So(c.GetString("a", "example"), ShouldEqual, "Difficult!")
-// 				So(c.GetList("a"), ShouldBeNil)
-// 				So(c.GetBooleanList("h.a"), ShouldNotBeNil)
-// 				So(c.GetFloatList("h.f"), ShouldNotBeNil)
-// 				So(c.GetFloat("h"), ShouldEqual, 0)
+func testFunc(t *testing.T, c config.Config) {
 
-// 				hb := c.GetByteSize("h.b")
-// 				So(hb.Int64(), ShouldEqual, 10995116277760)
-// 				So(c.GetString("b.d", "example"), ShouldEqual, "example")
-// 				So(c.GetList("b.d"), ShouldNotBeNil)
-// 				So(c.GetStringList("b.d"), ShouldBeNil)
-// 				So(c.GetIntList("b.d"), ShouldNotBeNil)
+	testutils.Assert(t, c.GetString("a") == "Easy!", "a should be easy")
+	testutils.Assert(t, c.GetMap("a") == nil, "map of a should be nil")
+	testutils.Assert(t, c.GetInterface("b.c.cn.a") == "test", "b.c.cn.a should be test")
 
-// 				c.SetKeyValue("b.d", []string{"1", "2", "3"})
+	c.SetKeyValue("b.c.cn.a", "value")
+	newC := c.Copy()
+	newC.SetKeyValue("b.c.cn.a", "joking")
+	testutils.Assert(t, newC.GetInterface("b.c.cn.a") == "joking", "new b.c.cn.a should be joking")
+	testutils.Assert(t, c.GetInterface("b.c.cn.a") == "value", "b.c.cn.a should be value")
+	testutils.Assert(t, c.GetInterface("n.a") == "value", "n.a should be value")
 
-// 				stringList := c.GetStringList("b.d")
-// 				So(stringList[0], ShouldEqual, "1")
-// 				So(stringList[1], ShouldEqual, "2")
-// 				So(stringList[2], ShouldEqual, "3")
+	intList := c.GetIntList("b.c.cbd")
+	testutils.Assert(t, intList[0] == 3, "b.c.cbd[0] should be 3")
+	testutils.Assert(t, intList[1] == 4, "b.c.cbd[1] should be 4")
+	testutils.Assert(t, c.GetString("a.b.c", "example") == "example", "a.b.c should be default example")
+	testutils.Assert(t, c.GetString("b.c.e") == "Just Do it", "b.c.e should be `Just Do it`")
+	testutils.Assert(t, c.GetFloat("h") == 1.01, "h should be  1.01")
+	testutils.Assert(t, c.GetInt("b.c.f", 100) == 2, "b.c.f should be 2")
+	testutils.Assert(t, c.GetInt("b.c.e") == 0, "b.c.e should be 0")
+	testutils.Assert(t, c.GetBoolean("b.c.g"), "b.c.g should be true")
+	testutils.Assert(t, c.GetBoolean("b.c.x", true), "b.c.x should be true")
+	testutils.Assert(t, c.GetConfig("b") != nil, "b config should not be nil")
 
-// 				So(c.GetKeys(), ShouldNotBeNil)
-// 				bs, _ := c.Dump()
-// 				So(bs, ShouldNotBeNil)
-// 			})
-// 		})
-// 		Convey("yaml config", func() {
-// 			c, err := config.NewConfig(yamlFile)
-// 			So(err, ShouldBeNil)
-// 			So(c, ShouldNotBeNil)
+	testutils.Assert(t, c.GetTimeDuration("b.c.t") == time.Hour*24, "b.c.t should be 1d")
 
-// 			Convey("yaml checker", func() {
-// 				So(c.GetString("a"), ShouldEqual, "Easy!")
-// 				So(c.GetMap("a"), ShouldBeNil)
-// 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "test")
-// 				c.SetKeyValue("b.c.cn.a", "value")
+	c.SetKeyValue("a.b.c", "Correct")
+	c.SetKeyValue("b.c.e", "Correct")
+	c.SetKeyValue("b.c.d", "d")
+	c.SetKeyValue("b.c.g", false)
+	c.SetKeyValue("b.d", []int{1, 2, 3, 4})
 
-// 				newC := c.Copy()
-// 				newC.SetKeyValue("b.c.cn.a", "joking")
-// 				So(newC.GetInterface("b.c.cn.a"), ShouldEqual, "joking")
+	testutils.Assert(t, c.GetString("a", "example") == "example", "a should be default example")
+	testutils.Assert(t, c.GetInterface("a", "example") != nil, "a should not be nil")
+	testutils.Assert(t, c.GetString("a.b.c", "example") == "Correct", "a.b.c should be Correct")
+	testutils.Assert(t, c.GetString("b.c.e", "example") == "Correct", "b.c.e should be Correct")
+	testutils.Assert(t, !c.GetBoolean("b.c.g", true), "b.c.g should be false")
+	testutils.Assert(t, c.GetString("b.c.d", "example") == "d", "b.c.d should be example")
 
-// 				So(c.GetInterface("b.c.cn.a"), ShouldEqual, "value")
-// 				So(c.GetInterface("n_v.a"), ShouldEqual, "value")
+	c.SetKeyValue("a", "Difficult!")
+	c.SetKeyValue("h.a", []bool{false, true, false})
+	c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
+	c.SetKeyValue("h.b", "10T")
 
-// 				intList := c.GetIntList("b.c.cbd")
-// 				So(intList[0], ShouldEqual, 3)
-// 				So(intList[1], ShouldEqual, 4)
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
-// 				So(c.GetString("b.c.e"), ShouldEqual, "Just Do it")
-// 				So(c.GetFloat("h"), ShouldEqual, 1.01)
-// 				So(c.GetInt("b.c.f", 100), ShouldEqual, 2)
-// 				So(c.GetInt("b.c.e"), ShouldEqual, 0)
-// 				So(c.GetBoolean("b.c.g"), ShouldBeTrue)
-// 				So(c.GetBoolean("b.c.x", true), ShouldBeTrue)
-// 				So(c.GetConfig("b"), ShouldNotBeNil)
-// 				faceList := c.GetList("b.d")
-// 				So(faceList[0], ShouldEqual, 3)
-// 				So(faceList[1], ShouldEqual, 4)
-// 				So(c.GetTimeDuration("b.c.t"), ShouldEqual, time.Hour*24)
+	testutils.Assert(t, c.GetString("a.b.c", "example") == "example", "a.b.c should be default example")
+	testutils.Assert(t, c.GetString("a", "example") == "Difficult!", "a should be Difficult!")
+	testutils.Assert(t, c.GetList("a") == nil, "list of a should be nil")
+	testutils.Assert(t, c.GetBooleanList("h.a") != nil, "list of h.a should not be nil")
+	testutils.Assert(t, c.GetFloatList("h.f") != nil, "list of h.f should not be nil")
+	testutils.Assert(t, c.GetFloat("h") == 0, "h should be empty")
 
-// 				c.SetKeyValue("a.b.c", "Correct")
-// 				c.SetKeyValue("b.c.e", "Correct")
-// 				c.SetKeyValue("b.c.d", "d")
-// 				c.SetKeyValue("b.c.g", false)
-// 				c.SetKeyValue("b.d", []int{1, 2, 3, 4})
+	hb := c.GetByteSize("h.b")
+	testutils.Assert(t, hb.Int64() == 10995116277760, "h.b should equals 10995116277760")
+	testutils.Assert(t, c.GetString("b.d", "example") == "example", "b.d should be default example")
+	testutils.Assert(t, c.GetList("b.d") != nil, "b.d should not be nil")
+	testutils.Assert(t, c.GetStringList("b.d") == nil, "string list of b.d should be nil")
+	testutils.Assert(t, c.GetIntList("b.d") != nil, "int list of b.d should not be nil")
 
-// 				So(c.GetString("a", "example"), ShouldEqual, "example")
-// 				So(c.GetInterface("a", "example"), ShouldNotBeNil)
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "Correct")
-// 				So(c.GetString("b.c.e", "example"), ShouldEqual, "Correct")
-// 				So(c.GetBoolean("b.c.g", true), ShouldBeFalse)
-// 				So(c.GetString("b.c.d", "example"), ShouldEqual, "d")
+	c.SetKeyValue("b.d", []string{"1", "2", "3"})
 
-// 				c.SetKeyValue("a", "Difficult!")
-// 				c.SetKeyValue("h.a", []bool{false, true, false})
-// 				c.SetKeyValue("h.f", []float64{1.2, 2.3, 3.4})
-// 				c.SetKeyValue("h.b", "10T")
+	stringList := c.GetStringList("b.d")
+	testutils.Assert(t, stringList[0] == "1", "b.d[0] should be 1")
+	testutils.Assert(t, stringList[1] == "2", "b.d[1] should be 2")
+	testutils.Assert(t, stringList[2] == "3", "b.d[2] should be 3")
 
-// 				So(c.GetString("a.b.c", "example"), ShouldEqual, "example")
-// 				So(c.GetString("a", "example"), ShouldEqual, "Difficult!")
-// 				So(c.GetList("a"), ShouldBeNil)
-// 				So(c.GetBooleanList("h.a"), ShouldNotBeNil)
-// 				So(c.GetFloatList("h.f"), ShouldNotBeNil)
-// 				So(c.GetFloat("h"), ShouldEqual, 0)
-
-// 				hb := c.GetByteSize("h.b")
-// 				So(hb.Int64(), ShouldEqual, 10995116277760)
-// 				So(c.GetString("b.d", "example"), ShouldEqual, "example")
-// 				So(c.GetList("b.d"), ShouldNotBeNil)
-// 				So(c.GetStringList("b.d"), ShouldBeNil)
-// 				So(c.GetIntList("b.d"), ShouldNotBeNil)
-
-// 				c.SetKeyValue("b.d", []string{"1", "2", "3"})
-
-// 				stringList := c.GetStringList("b.d")
-// 				So(stringList[0], ShouldEqual, "1")
-// 				So(stringList[1], ShouldEqual, "2")
-// 				So(stringList[2], ShouldEqual, "3")
-
-// 				So(c.GetKeys(), ShouldNotBeNil)
-// 				bs, _ := c.Dump()
-// 				So(bs, ShouldNotBeNil)
-// 			})
-// 		})
-// 	})
-// }
+	testutils.Assert(t, c.GetKeys() != nil, "keys should not be nil")
+	bs, _ := c.Dump()
+	testutils.Assert(t, bs != nil, "dump config should not be nil")
+}

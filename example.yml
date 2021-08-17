@@ -22,9 +22,9 @@ b:
     f: 2
     g: ON
     t: 1day
-    cn: ${n_v}
+    cn: ${n}
     cbd: ${b.d}
   d: [3, 4]
 h: 1.01
-n_v:
+"n":
   a: "test"

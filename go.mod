@@ -3,6 +3,6 @@ module github.com/iTrellis/config
 go 1.13
 
 require (
-	github.com/iTrellis/common v0.21.7
-	gopkg.in/yaml.v2 v2.4.0
+	github.com/iTrellis/common v0.21.13
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 )

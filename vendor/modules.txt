@@ -1,11 +1,17 @@
-# github.com/iTrellis/common v0.21.7
+# github.com/google/uuid v1.3.0
+github.com/google/uuid
+# github.com/iTrellis/common v0.21.13
+github.com/iTrellis/common/data-structures/stack
+github.com/iTrellis/common/encryption/hash
+github.com/iTrellis/common/errors
 github.com/iTrellis/common/files
 github.com/iTrellis/common/formats
-# golang.org/x/text v0.3.5
+github.com/iTrellis/common/testutils
+# golang.org/x/text v0.3.7
 golang.org/x/text/encoding
 golang.org/x/text/encoding/internal
 golang.org/x/text/encoding/internal/identifier
 golang.org/x/text/encoding/simplifiedchinese
 golang.org/x/text/transform
-# gopkg.in/yaml.v2 v2.4.0
-gopkg.in/yaml.v2
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+gopkg.in/yaml.v3
