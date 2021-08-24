@@ -10,7 +10,7 @@ go get github.com/iTrellis/config
 
 ### imports
 
-import [gopkg.in/yaml.v2](https://github.com/go-yaml/yaml)
+import [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml/tree/v3)
 
 ## Usage
 
