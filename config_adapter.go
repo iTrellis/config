@@ -335,6 +335,8 @@ func (p *AdapterConfig) GetMap(key string) Options {
 	}
 
 	switch t := vm.(type) {
+	case Options:
+		return t
 	case map[string]interface{}:
 		return t
 	case map[interface{}]interface{}:

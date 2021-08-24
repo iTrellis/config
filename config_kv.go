@@ -81,6 +81,8 @@ func (p *AdapterConfig) getKeyValue(key string) (vm interface{}, err error) {
 		}
 
 		switch v := vm.(type) {
+		case Options:
+			vm = v[t]
 		case map[string]interface{}:
 			vm = v[t]
 		case map[interface{}]interface{}:
@@ -106,6 +108,9 @@ func (p *AdapterConfig) setKeyValue(key string, value interface{}) (err error) {
 		}
 		v, _ := p.getKeyValue(strings.Join(tokens[:i], "."))
 		switch vm := v.(type) {
+		case Options:
+			vm[tokens[i]] = value
+			value = vm
 		case map[string]interface{}:
 			vm[tokens[i]] = value
 			value = vm
