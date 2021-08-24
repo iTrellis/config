@@ -339,8 +339,6 @@ func (p *AdapterConfig) GetMap(key string) Options {
 		return t
 	case map[string]interface{}:
 		return t
-	case Options:
-		return t
 	case map[interface{}]interface{}:
 		result := make(map[string]interface{})
 		for k, v := range t {
