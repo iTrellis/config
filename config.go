@@ -48,6 +48,20 @@ func OptionStruct(rt ReaderType, st interface{}) OptionFunc {
 	}
 }
 
+// OptionENVAllowed 允许获取系统环境变量
+func OptionENVAllowed() OptionFunc {
+	return func(c *AdapterConfig) {
+		c.EnvAllowed = true
+	}
+}
+
+// OptionENVPrefix 设置环境变量已自定义字符串开始
+func OptionENVPrefix(prefix string) OptionFunc {
+	return func(c *AdapterConfig) {
+		c.EnvPrefix = prefix
+	}
+}
+
 // Config manager data functions
 type Config interface {
 	// get a object

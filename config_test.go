@@ -19,9 +19,11 @@ package config_test
 
 import (
 	"encoding/json"
+	"os"
 	"testing"
 	"time"
 
+	"github.com/iTrellis/common/shell"
 	"github.com/iTrellis/common/testutils"
 	"github.com/iTrellis/config"
 )
@@ -43,7 +45,13 @@ func TestNewJSONConfig(t *testing.T) {
 	err = config.ReadJSONFile(wrongFile, nil)
 	testutils.NotOk(t, err)
 
-	c, err = config.NewConfig(jsonFile)
+	err = os.Setenv("PRE_USER", shell.Output("whoami"))
+	testutils.Ok(t, err)
+
+	c, err = config.NewConfigOptions(
+		config.OptionFile(jsonFile),
+		config.OptionENVAllowed(),
+		config.OptionENVPrefix("PRE"))
 	testutils.Ok(t, err)
 	testutils.Assert(t, c != nil, "config get nil")
 
@@ -57,7 +65,15 @@ func TestNewJSONConfig(t *testing.T) {
 
 func TestNewYAMLConfig(t *testing.T) {
 
-	c, err := config.NewConfig(yamlFile)
+	// c, err := config.NewConfig(yamlFile)
+	c, err := config.NewConfigOptions(
+		config.OptionFile(yamlFile),
+		config.OptionENVAllowed(),
+		config.OptionENVPrefix("PRE"))
+
+	if err != nil {
+		panic(err)
+	}
 	testutils.Ok(t, err)
 	testutils.Assert(t, c != nil, "loaded config should not be nil")
 	faceList := c.GetList("b.d")
@@ -69,6 +85,11 @@ func TestNewYAMLConfig(t *testing.T) {
 }
 
 func testFunc(t *testing.T, c config.Config) {
+	testutils.Assert(t, c.GetString("b.u") == "", "env user should be empty")
+
+	envUser := os.Getenv("PRE_USER")
+	testutils.Assert(t, c.GetString("b.pre") == envUser, "env prefix user should be: "+envUser)
+	testutils.Assert(t, c.GetString("b.xxx") == "", "b.xxx should be empty")
 
 	testutils.Assert(t, c.GetString("a") == "Easy!", "a should be easy")
 	testutils.Assert(t, c.GetMap("a") == nil, "map of a should be nil")

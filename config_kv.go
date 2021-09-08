@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package config
 
 import (
+	"os"
 	"reflect"
 	"strings"
 
@@ -57,7 +58,17 @@ func (p *AdapterConfig) copyDollarSymbol(key string, maps *map[string]interface{
 					continue
 				}
 
-				vm, err := p.getKeyValue(s[2 : len(s)-1])
+				pkey := s[2 : len(s)-1]
+				if p.EnvAllowed && (p.EnvPrefix == "" || strings.HasPrefix(pkey, p.EnvPrefix)) {
+					if env := os.Getenv(pkey); env != "" {
+						if err := p.setKeyValue(strings.Join(keys, "."), env); err != nil {
+							return err
+						}
+						continue
+					}
+				}
+
+				vm, err := p.getKeyValue(pkey)
 				if err != nil {
 					return err
 				}
@@ -71,10 +82,10 @@ func (p *AdapterConfig) copyDollarSymbol(key string, maps *map[string]interface{
 	return nil
 }
 
-func (p *AdapterConfig) getKeyValue(key string) (vm interface{}, err error) {
+func (p *AdapterConfig) getKeyValue(key string) (interface{}, error) {
 
 	tokens := strings.Split(key, ".")
-	vm = p.configs[tokens[0]]
+	vm := p.configs[tokens[0]]
 	for i, t := range tokens {
 		if i == 0 {
 			continue
@@ -90,12 +101,8 @@ func (p *AdapterConfig) getKeyValue(key string) (vm interface{}, err error) {
 		default:
 			return nil, ErrNotMap
 		}
-
 	}
-	if vm == nil {
-		err = ErrValueNil
-	}
-	return
+	return vm, nil
 }
 
 // setKeyValue set key value into *configs

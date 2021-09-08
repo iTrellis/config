@@ -18,13 +18,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 package config
 
 import (
-	"errors"
+	"github.com/iTrellis/common/errors"
 )
 
 // Errors
 var (
 	ErrNotMap                 = errors.New("interface is not a map")
-	ErrValueNil               = errors.New("value is nil")
 	ErrInvalidKey             = errors.New("invalid key")
 	ErrInvalidFilePath        = errors.New("invalid file path")
 	ErrUnknownSuffixes        = errors.New("unknown file with suffix")

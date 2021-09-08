@@ -27,6 +27,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
       "cn": "${n}",
       "cbd": "${b.d}"
     },
+    "u": "${USER}",
+    "pre": "${PRE_USER}",
   /**  Test 4 
     "x": "http://www.example.com"
   */

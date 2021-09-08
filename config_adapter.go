@@ -39,6 +39,9 @@ type AdapterConfig struct {
 	ConfigString string
 	ConfigStruct interface{}
 
+	EnvPrefix  string
+	EnvAllowed bool
+
 	data []byte
 
 	readerType ReaderType
@@ -200,6 +203,10 @@ func (p *AdapterConfig) GetBoolean(key string, defValue ...bool) (b bool) {
 		b = defValue[0]
 	}()
 	v := p.GetInterface(key, defValue)
+
+	if v == nil {
+		return
+	}
 
 	switch reflect.TypeOf(v).Kind() {
 	case reflect.Bool:

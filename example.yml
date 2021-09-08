@@ -25,6 +25,8 @@ b:
     cn: ${n}
     cbd: ${b.d}
   d: [3, 4]
+  u: ${USER}
+  pre: "${PRE_USER}"
 h: 1.01
 "n":
   a: "test"
