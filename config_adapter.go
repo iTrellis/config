@@ -378,10 +378,16 @@ func (p *AdapterConfig) GetConfig(key string) Config {
 }
 
 // ToObject unmarshal values to object
-func (p *AdapterConfig) ToObject(key string, model interface{}) error {
-	vm, err := p.getKeyValue(key)
-	if err != nil {
-		return nil
+func (p *AdapterConfig) ToObject(key string, model interface{}) (err error) {
+
+	var vm interface{}
+	if key != "" {
+		vm, err = p.getKeyValue(key)
+		if err != nil {
+			return
+		}
+	} else {
+		vm = p.copy().configs
 	}
 
 	switch p.readerType {
