@@ -1,11 +1,13 @@
 # Config Reader
 
+Achieve this repo, move it into [github.com/iTellis/common](github.com/iTellis/common)
+
 Go package for reading cofig file by JSON, XML, YAML.
 
 ## Installation
 
 ```bash
-go get github.com/iTrellis/config
+go get github.com/iTrellis/common/config
 ```
 
 ### imports
